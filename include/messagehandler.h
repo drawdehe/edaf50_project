@@ -11,6 +11,8 @@ class MessageHandler {
 public:
     MessageHandler(Connection conn);
     void send_code(Protocol code);
+
+
     void send_int(int value);
     void send_int_parameter(int param);
     void send_string_parameter(std::string param);

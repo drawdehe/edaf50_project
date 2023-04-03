@@ -1,19 +1,18 @@
 #include "messagehandler.h"
 
-#include <utility>
 
 MessageHandler::MessageHandler(Connection t_conn) : conn(std::move(t_conn)) {}
 
 void MessageHandler::send_byte(int code) {
     try {
-        conn->write(code);
-    } catch (Exception e) {
-        throw ConnectionClosedException;
+        conn.write(code);
+    } catch (struct ConnectionCloseException()) {
+        throw ConnectionClosedException();
     }
 } 
 
 void MessageHandler::send_code(Protocol code) {
-    send_byte(code);
+    send_byte(static_cast<int>(code));
 }
 
 void MessageHandler::send_int(int value) {
