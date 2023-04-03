@@ -19,7 +19,7 @@ public:
     int receive_int_parameter();
     std::string receive_string_parameter();
 private:
-    Connection conn;
+    const Connection conn;
     void send_byte(int code);
     int receive_byte();
 };

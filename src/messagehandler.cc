@@ -1,6 +1,8 @@
 #include "messagehandler.h"
 
-MessageHandler::MessageHandler(Connection conn) : conn(conn) {}
+#include <utility>
+
+MessageHandler::MessageHandler(Connection t_conn) : conn(std::move(t_conn)) {}
 
 void MessageHandler::send_byte(int code) {
     try {
