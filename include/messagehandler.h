@@ -1,6 +1,8 @@
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
 
+#include <string>
+
 #include "protocol.h"
 #include "connection.h"
 #include "connectionclosedexception.h"
