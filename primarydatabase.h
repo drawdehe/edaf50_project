@@ -9,9 +9,9 @@ using std::map;
 using std::pair;
 using std::cout;
 
-class PrimaryBase : public Database {
+class PrimaryDatabase : public Database {
 
-public:
+public:	
 	bool addGroup(string name) {
 		int id = nextId++;
 		m.insert(pair<int, NewsGroup>(id, NewsGroup(id, name)));
@@ -27,13 +27,23 @@ public:
 		for (const auto& kv : m) {
 			cout << kv.first << " " << kv.second.getName() << "\n";
 		}
-
 	}
 
-	bool addArticle(int groupName, string title, string author, string text);	
-	bool deleteArticle(int groupId, int articleId);
+	bool addArticle(int groupId, string title, string author, string text) {
+		m.at(groupId).addArticle(title, author, text);
+		return true;
+	}
+
+	bool deleteArticle(int groupId, int articleId) {
+		return m.at(groupId).deleteArticle(articleId);
+	}
+
 	void listArticles(int groupId) {
 		m.at(groupId).list();
+	}
+
+	void printArticle(int groupId, int articleId) {
+		m.at(groupId).printArticle(articleId);
 	}
 
 private:

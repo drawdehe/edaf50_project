@@ -27,7 +27,7 @@ public:
 	}
 
 	void list() const {
-		cout << "The group contains " << m.size() << " articles." << "\n";
+		cout <<  m.size() << " articles in " << name << ":" "\n";
 		for (auto it = m.begin(); it != m.end(); ++it) {
 			cout << it->first << " " << it->second.getTitle() << "\n";
 		}
