@@ -29,19 +29,19 @@ test:
 
 # Targets rely on implicit rules for compiling and linking
 
-articletest: articletest.o
-grouptest: grouptest.o
-primarytest: primarytest.o
+articletest: src/articletest.o
+grouptest: src/grouptest.o
+primarytest: src/primarytest.o
 
 # Phony targets
 .PHONY: all test clean distclean
 
 # Standard clean
 clean:
-	rm -f *.o $(PROGS)
+	rm -f src/*.o $(PROGS)
 
 distclean: clean
-	rm *.d
+	rm src/*.d
 
 # Include the *.d files
 SRC = $(wildcard *.cc)
