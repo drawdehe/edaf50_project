@@ -21,7 +21,7 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS =  articletest grouptest primarytest
+PROGS =  src/articletest src/grouptest src/primarytest
 
 all: $(PROGS)
 
