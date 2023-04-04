@@ -28,6 +28,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include <utility>
+
 class Server;
 
 /* A Connection object represents a connection (a socket)  */
