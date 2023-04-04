@@ -3,6 +3,8 @@
 
 #include <map>
 #include <iostream>
+#include <sstream>
+#include <algorithm>
 
 using std::string;
 using std::map;
@@ -12,38 +14,58 @@ using std::cout;
 class PrimaryDatabase : public Database {
 
 public:	
-	bool addGroup(string name) {
+	string listGroups() const {
+		std::ostringstream os;
+		os << m.size() << " newsgroups:" << "\n";
+		for (const auto& kv : m) {
+			os << kv.first << " " << kv.second.getName() << "\n";
+		}
+		return os.str();
+	}
+
+	bool addGroup(string groupName) {
+		// Check that group name isn't taken
+		if (std::find_if(m.begin(), m.end(), [groupName](pair<int, NewsGroup> kv) { return kv.second.getName() == groupName; }) != m.end()) {
+			return false;
+		}
+
 		int id = nextId++;
-		m.insert(pair<int, NewsGroup>(id, NewsGroup(id, name)));
+		m.insert(pair<int, NewsGroup>(id, NewsGroup(id, groupName)));
 		return true;
 	}
 
-	bool deleteGroup(int id) {
-		return m.erase(id);
+	bool deleteGroup(int groupId) {
+		return m.erase(groupId);
 	}
 
-	void listGroups() const {
-		cout << m.size() << " newsgroups:" << "\n";
-		for (const auto& kv : m) {
-			cout << kv.first << " " << kv.second.getName() << "\n";
+	string listArticles(int groupId) {
+		try {
+			return m.at(groupId).listArticles();
+		} catch (const std::out_of_range& e) {
+			return "invalid group id";
 		}
 	}
 
-	bool addArticle(int groupId, string title, string author, string text) {
-		m.at(groupId).addArticle(title, author, text);
-		return true;
+	bool addArticle(int groupId, string title, string author, string text) { // throw error förmodligen?
+		auto it = std::find_if(m.begin(), m.end(), [groupName](pair<int, NewsGroup> kv) { return kv.second.getName() == groupName; });
+
+		if (it == m.end()) {
+			return false; // specificera fel grupp-id
+		}
+
+		try {
+			(*it).addArticle(title, author, text);
+		} catch (const std::out_of_range& e) {
+			return false; // artikel-id
+		}
 	}
 
 	bool deleteArticle(int groupId, int articleId) {
 		return m.at(groupId).deleteArticle(articleId);
 	}
 
-	void listArticles(int groupId) {
-		m.at(groupId).list();
-	}
-
-	void printArticle(int groupId, int articleId) {
-		m.at(groupId).printArticle(articleId);
+	string getArticle(int groupId, int articleId) {
+		return m.at(groupId).getArticle(articleId);
 	}
 
 private:

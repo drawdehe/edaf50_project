@@ -1,7 +1,6 @@
 #include "messagehandler.h"
 
-
-MessageHandler::MessageHandler(Connection t_conn) : conn(std::move(t_conn)) {}
+§MessageHandler::MessageHandler(Connection t_conn) : conn(std::move(t_conn)) {}
 
 void MessageHandler::send_byte(unsigned char bt) {
     try {

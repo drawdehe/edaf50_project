@@ -29,6 +29,7 @@
 #define SERVER_H
 
 #include "connection.h"
+#include "../include/primarydatabase.h"
 
 #include <memory>
 #include <vector>
@@ -66,6 +67,8 @@ class Server {
                             connections(std::move(o.connections)),
                             pending_socket{o.pending_socket} {}
 
+        std::string respond(int nbr);
+
       protected:
         /* The number of the communication socket */
         int my_socket {Connection::no_socket};
@@ -76,8 +79,11 @@ class Server {
         /* Socket for a connection waiting to be registered */
         mutable int pending_socket {Connection::no_socket};
 
-        /* Prints error message and exita */
+        /* Prints error message and exits */
         void error(const char* msg) const;
+
+    private:
+        std::unique_ptr<Database> db{new PrimaryDatabase()};
 };
 
 #endif
