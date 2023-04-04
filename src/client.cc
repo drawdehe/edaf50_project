@@ -9,6 +9,7 @@ using std::string;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::cerr;
 
 Connection init(int argc, char* argv[]) {
     if (argc != 3) {
@@ -41,10 +42,14 @@ void list_commands() {
     cout << "8. End the session." << endl;
 }
 
-void list_newsgroups(MessageHandler m) {
+void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
-    while (m.receive_code != Protocol::ANS_END) {
+    receive_answer(m);
+}
+
+void receive_answer(MessageHandler& m){
+    while (m.receive_code() != Protocol::ANS_END) {
         // handle the response from the server
     }
 }
@@ -63,22 +68,22 @@ int app(const Connection& conn) {
                     list_newsgroups(m);
                     break;
                 case 2:
-                    create_a_newsgroup(m);
+                    //create_a_newsgroup(m);
                     break;
                 case 3:
-                    delete_a_newsgroup(m);
+                    //delete_a_newsgroup(m);
                     break;
                 case 4:
-                    list_articles_in_a_newsgroup(m);
+                    //list_articles_in_a_newsgroup(m);
                     break;
                 case 5:
-                    create_an_article(m);
+                    //create_an_article(m);
                     break;
                 case 6:
-                    delete_an_article(m);
+                    //delete_an_article(m);
                     break;
                 case 7:
-                    get_an_article();
+                    //get_an_article();
                     break;
                 case 8:
                     return 1;
