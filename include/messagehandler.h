@@ -22,7 +22,7 @@ public:
     std::string receive_string_parameter();
 private:
     const Connection conn;
-    void send_byte(int code);
+    void send_byte(unsigned char bt);
     int receive_byte();
 };
 

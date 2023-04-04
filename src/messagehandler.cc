@@ -3,16 +3,16 @@
 
 MessageHandler::MessageHandler(Connection t_conn) : conn(std::move(t_conn)) {}
 
-void MessageHandler::send_byte(int code) {
+void MessageHandler::send_byte(unsigned char bt) {
     try {
-        conn.write(code);
+        conn.write(bt);
     } catch (struct ConnectionCloseException()) {
         throw ConnectionClosedException();
     }
 } 
 
 void MessageHandler::send_code(Protocol code) {
-    send_byte(static_cast<int>(code));
+    send_byte(static_cast<unsigned char>(code));
 }
 
 void MessageHandler::send_int(int value) {
@@ -36,16 +36,17 @@ void MessageHandler::send_string_parameter(std::string param) {
 }
 
 int MessageHandler::receive_byte() {
-    int code = conn.read();
-    if (code == Connection.CONNECTION_CLOSED) { // fix this
+    if (!conn.isConnected()) { // fix this
         throw ConnectionClosedException();
     }
+
+    int code = conn.read();
     return code;
 }
 
 Protocol MessageHandler::receive_code() {
     int code = receive_byte();
-    return code;
+    return static_cast<Protocol>(code);
 }
 
 int MessageHandler::receive_int() {
@@ -58,22 +59,25 @@ int MessageHandler::receive_int() {
 }
 
 int MessageHandler::receive_int_parameter() {
-    int code = receive_code();
+    Protocol code = receive_code();
     if (code != Protocol::PAR_NUM) {
         throw ConnectionClosedException();
     }
+
     return receive_int();
 }
 
 std::string MessageHandler::receive_string_parameter() {
-    int code = receive_code();
+    Protocol code = receive_code();
     if (code != Protocol::PAR_STRING) {
         throw ConnectionClosedException();
     }
+
     int n = receive_int();
     if (n < 0) {
         throw ConnectionClosedException();
     }
+
     std::string result;
     for (unsigned int i = 0; i <= n; i++) {
         unsigned char ch = conn.read();
