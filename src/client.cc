@@ -48,6 +48,22 @@ void list_newsgroups(MessageHandler& m) {
     receive_answer(m);
 }
 
+void create_newsgroup(MessageHandler& m) {
+    string name_param;
+    cout << "Pick a name for your new newsgroup:" << endl;
+    std::getline(cin, name_param);
+    m.send_code(Protocol::COM_CREATE_NG);
+    m.send_string_parameter(name_param);
+    m.send_code(Protocol::COM_END);
+    receive_answer(m);
+}
+
+void delete_newsgroup(MessageHandler& m){
+    int int_param;
+    cout << "Enter uid of newsgroup to delete:" << endl;
+    cin >> int_param;
+}
+
 void receive_answer(MessageHandler& m){
     while (m.receive_code() != Protocol::ANS_END) {
         // handle the response from the server
@@ -68,10 +84,10 @@ int app(const Connection& conn) {
                     list_newsgroups(m);
                     break;
                 case 2:
-                    //create_a_newsgroup(m);
+                    create_newsgroup(m);
                     break;
                 case 3:
-                    //delete_a_newsgroup(m);
+                    //delete_newsgroup(m);
                     break;
                 case 4:
                     //list_articles_in_a_newsgroup(m);
