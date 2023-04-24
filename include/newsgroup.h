@@ -2,6 +2,7 @@
 
 #include <map>
 #include <iostream>
+#include <sstream>
 
 using std::string;
 using std::map;
@@ -17,6 +18,10 @@ public:
 	}
 
 	bool addArticle(string title, string author, string text) {
+		if (std::find_if(m.begin(), m.end(), [title](pair<int, Article> kv) { return kv.second.getTitle() == title; }) == m.end()) {
+			return false;
+		}
+
 		int articleId = nextId++;
 		m.insert(pair<int, Article>(articleId, Article(articleId, title, author, text)));
 		return true;
@@ -26,15 +31,19 @@ public:
 		return m.erase(id);
 	}
 
-	void list() const {
-		cout <<  m.size() << " articles in " << name << ":" "\n";
+	string listArticles() const {
+		std::ostringstream os;
+		os <<  m.size() << " articles in " << name << ":" "\n";
 		for (auto it = m.begin(); it != m.end(); ++it) {
-			cout << it->first << " " << it->second.getTitle() << "\n";
+			os << it->first << " " << it->second.getTitle() << "\n";
 		}
+		return os.str();
 	}
 
-	void printArticle(int id) const {
-		cout << m.at(id);
+	string getArticle(int id) const {
+		std::ostringstream os;
+		os << m.at(id);
+		return os.str();
 	}
 
 private:

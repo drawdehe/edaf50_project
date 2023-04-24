@@ -126,7 +126,7 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn)
                 error("registerConnection: connection is busy");
         }
         if (pending_socket == Connection::no_socket) {
-                error("registerConnection: no client is trying to connect");
+                error("registerConnection: no client is trying tokm connect");
         }
         conn->initConnection(pending_socket);
         connections.push_back(conn);
@@ -144,4 +144,35 @@ void Server::error(const char* msg) const
 {
         std::cerr << "Class Server::" << msg << std::endl;
         exit(1);
+}
+
+
+std::string Server::respond(int nbr) 
+{
+        std::string result;
+
+        switch(nbr) {
+        case 1:
+                result = db.listGroups();
+                break;
+        case 2:
+                result = db.addGroup(groupName);
+                break;
+        case 3:
+                result = db.deleteGroup(groupId);
+                break;
+        case 4:
+                result = db.listArticles(groupId);
+                break;
+        case 5:
+                result = db.addArticle(groupId, title, author, text);
+                break;
+        case 6:
+                result = db.deleteArticle(groupId, articleId);
+                break;
+        case 7:
+                result = db.getArticle(groupId, articleId);
+                break;
+
+        return result;
 }

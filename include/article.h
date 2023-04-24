@@ -11,14 +11,6 @@ public:
 		return title;
 	}
 
-	string getAuthor() {
-		return author;
-	}
-
-	string getText() {
-		return text;
-	}
-
 	friend ostream& operator<<(ostream& os, Article a);
 
 private:
