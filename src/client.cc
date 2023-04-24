@@ -1,6 +1,6 @@
-#include "connection.h"
-#include "connectionclosedexception.h"
-#include "messagehandler.h"
+#include "../include/connection.h"
+#include "../include/connectionclosedexception.h"
+#include "../include/messagehandler.h"
 
 #include <iostream>
 #include <string>
@@ -45,7 +45,16 @@ void list_commands() {
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
-    receive_answer(m);
+
+    if(m.receive_code() == Protocol::ANS_LIST_NG){
+        //ans_list_ng
+        int nbr_ngs = m.receive_int_parameter();//number of newsgroups
+        for(int i = 0; i < nbr_ngs; i++) { // list newsgroups
+            cout << "id: " << m.receive_int_parameter() 
+                 << ". name: " << m.receive_string_parameter() << endl;
+        }
+    }
+
 }
 
 void create_newsgroup(MessageHandler& m) {
