@@ -22,7 +22,7 @@ LDFLAGS =   -g
 
 # Targets
 
-PROGS =  src/articletest src/grouptest src/primarytest src/client
+PROGS =  src/articletest src/grouptest src/primarytest src/client src/messagehandler
 
 all: $(PROGS)
 
@@ -33,7 +33,9 @@ test:
 articletest: src/articletest.o
 grouptest: src/grouptest.o
 primarytest: src/primarytest.o
-client: src/client.o
+client: src/client.o src/messagehandler.o src/connection.o
+messagehandler: src/messagehandler.o
+
 
 # Phony targets
 .PHONY: all test clean distclean

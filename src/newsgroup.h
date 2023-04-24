@@ -1,3 +1,6 @@
+#ifndef NEWSGROUP_H
+#define NEWSGROUP_H
+
 #include "article.h"
 
 #include <map>
@@ -53,3 +56,5 @@ private:
 	map<int, Article> m;
 	int nextId{1};
 };
+
+#endif

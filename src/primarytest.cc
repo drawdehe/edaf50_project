@@ -1,4 +1,4 @@
-#include "../include/primarydatabase.h"
+#include "primarydatabase.h"
 
 #include <memory>
 

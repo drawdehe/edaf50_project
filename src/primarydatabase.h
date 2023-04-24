@@ -1,3 +1,6 @@
+#ifndef PRIMARYDB_H
+#define PRIMARYDB_H
+
 #include "database.h"
 #include "newsgroup.h"
 
@@ -74,3 +77,5 @@ private:
 	map<int, NewsGroup> m; 
 	int nextId{1};
 };
+
+#endif

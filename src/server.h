@@ -29,7 +29,7 @@
 #define SERVER_H
 
 #include "connection.h"
-#include "../include/primarydatabase.h"
+#include "primarydatabase.h"
 
 #include <memory>
 #include <vector>

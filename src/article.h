@@ -1,3 +1,6 @@
+#ifndef ARTICLE_H
+#define ARTICLE_H
+
 #include <iostream>
 
 using std::string;
@@ -20,9 +23,5 @@ private:
 	string text;
 };
 
-ostream& operator<<(ostream& os, Article a) {
-	os << '"' << a.title << '"' << " by " << a.author << ":" << "\n";
-	os << "\n";
-	os << a.text << "\n";
-	return os;
-}
+
+#endif

@@ -150,29 +150,32 @@ void Server::error(const char* msg) const
 std::string Server::respond(int nbr) 
 {
         std::string result;
-
+        /*
         switch(nbr) {
         case 1:
-                result = db.listGroups();
+                result = db->listGroups();
                 break;
         case 2:
-                result = db.addGroup(groupName);
+                result = db->addGroup(groupName);
                 break;
         case 3:
-                result = db.deleteGroup(groupId);
+                result = db->deleteGroup(groupId);
                 break;
         case 4:
-                result = db.listArticles(groupId);
+                result = db->listArticles(groupId);
                 break;
         case 5:
-                result = db.addArticle(groupId, title, author, text);
+                result = db->addArticle(groupId, title, author, text);
                 break;
         case 6:
-                result = db.deleteArticle(groupId, articleId);
+                result = db->deleteArticle(groupId, articleId);
                 break;
         case 7:
-                result = db.getArticle(groupId, articleId);
+                result = db->getArticle(groupId, articleId);
                 break;
-
+        
         return result;
+        }
+        */
+        return 0;
 }

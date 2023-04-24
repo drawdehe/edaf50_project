@@ -1,4 +1,4 @@
-#include "../include/newsgroup.h"
+#include "newsgroup.h"
 
 int main() {
 	NewsGroup n = NewsGroup(1, "Group 1");

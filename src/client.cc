@@ -1,6 +1,7 @@
-#include "../include/connection.h"
-#include "../include/connectionclosedexception.h"
-#include "../include/messagehandler.h"
+#include "client.h"
+#include "messagehandler.h"
+#include "connection.h"
+#include "connectionclosedexception.h"
 
 #include <iostream>
 #include <string>
@@ -42,6 +43,13 @@ void list_commands() {
     cout << "8. End the session." << endl;
 }
 
+
+void receive_answer(MessageHandler& m){
+    while (m.receive_code() != Protocol::ANS_END) {
+        // handle the response from the server
+    }
+}
+
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
@@ -78,11 +86,6 @@ void delete_newsgroup(MessageHandler& m){
     receive_answer(m);
 }
 
-void receive_answer(MessageHandler& m){
-    while (m.receive_code() != Protocol::ANS_END) {
-        // handle the response from the server
-    }
-}
 
 int app(const Connection& conn) {
     cout << "Choose a command: " << endl;
