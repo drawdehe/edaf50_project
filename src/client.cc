@@ -62,6 +62,11 @@ void delete_newsgroup(MessageHandler& m){
     int int_param;
     cout << "Enter uid of newsgroup to delete:" << endl;
     cin >> int_param;
+
+    m.send_code(Protocol::COM_DELETE_NG);
+    m.send_int_parameter(int_param);
+    m.send_code(Protocol::COM_END);
+    receive_answer(m);
 }
 
 void receive_answer(MessageHandler& m){
