@@ -47,17 +47,19 @@ public:
 	}
 
 	bool addArticle(int groupId, string title, string author, string text) { // throw error förmodligen?
-		auto it = std::find_if(m.begin(), m.end(), [groupName](pair<int, NewsGroup> kv) { return kv.second.getName() == groupName; });
+		auto it = std::find_if(m.begin(), m.end(), [groupId](pair<int, NewsGroup> kv) { return kv.first == groupId; });
 
 		if (it == m.end()) {
 			return false; // specificera fel grupp-id
 		}
 
 		try {
-			(*it).addArticle(title, author, text);
+			(*it).second.addArticle(title, author, text);	
 		} catch (const std::out_of_range& e) {
 			return false; // artikel-id
 		}
+		
+		return true;
 	}
 
 	bool deleteArticle(int groupId, int articleId) {
