@@ -21,7 +21,8 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS =  src/articletest src/grouptest primarytest
+
+PROGS =  src/articletest src/grouptest src/primarytest src/client
 
 all: $(PROGS)
 
@@ -29,9 +30,10 @@ test:
 
 # Targets rely on implicit rules for compiling and linking
 
-articletest: ../src/articletest.o
-grouptest: ../src/grouptest.o
-primarytest: primarytest.o
+articletest: src/articletest.o
+grouptest: src/grouptest.o
+primarytest: src/primarytest.o
+client: src/client.o
 
 # Phony targets
 .PHONY: all test clean distclean
