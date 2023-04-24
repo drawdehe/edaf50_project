@@ -1,9 +1,4 @@
-#include "connection.h"
-#include "connectionclosedexception.h"
-#include "messagehandler.h"
-
-#include <iostream>
-#include <string>
+#include "client.h"
 
 using std::string;
 using std::cin;
