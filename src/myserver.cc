@@ -59,7 +59,6 @@ Server init(int argc, char* argv[])
         }
         return server;
 }
-
 void process_request(std::shared_ptr<Connection>& conn, Server& server)
 {
         int    nbr = readNumber(conn);
@@ -80,6 +79,7 @@ void process_request(std::shared_ptr<Connection>& conn, Server& server)
 void serve_one(Server& server)
 {
         auto conn = server.waitForActivity();
+
         if (conn != nullptr) {
                 try {
                     process_request(conn, server);
