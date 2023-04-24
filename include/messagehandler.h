@@ -9,7 +9,7 @@
 
 class MessageHandler {
 public:
-    MessageHandler(Connection conn);
+    MessageHandler(const Connection& conn);
     void send_code(Protocol code);
 
 
