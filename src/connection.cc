@@ -103,6 +103,7 @@ void Connection::write(unsigned char ch) const
                 error("Write attempted on a not properly opened connection");
         }
         int count = ::write(my_socket, &ch, 1);
+        std::cout << "connection wrote " << ch << std::endl;
         if (count != 1) {
                 throw ConnectionClosedException();
         }
@@ -114,7 +115,9 @@ unsigned char Connection::read() const
                 error("Read attempted on a not properly opened connection");
         }
         char data;
+        std::cout << "about to read from socket " << my_socket << std::endl;
         int  count = ::read(my_socket, &data, 1);
+        std::cout << "connection read: " << count << std::endl;
         if (count != 1) {
                 throw ConnectionClosedException();
         }

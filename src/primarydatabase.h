@@ -17,12 +17,17 @@ using std::cout;
 class PrimaryDatabase : public Database {
 
 public:	
+	PrimaryDatabase() {
+		m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
+	}
+
 	string listGroups() const {
 		std::ostringstream os;
 		os << m.size() << " newsgroups:" << "\n";
 		for (const auto& kv : m) {
 			os << kv.first << " " << kv.second.getName() << "\n";
 		}
+		std::cout << "primarydatabase:30      " << os.str() << std::endl;
 		return os.str();
 	}
 

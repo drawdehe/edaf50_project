@@ -53,9 +53,11 @@ void receive_answer(MessageHandler& m){
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
-
-    if(m.receive_code() == Protocol::ANS_LIST_NG){
-        //ans_list_ng
+    cout << "selected list newsgroups" << endl;
+    Protocol p = m.receive_code();
+    cout << "code " << static_cast<int>(p) << endl;
+    if(p == Protocol::ANS_LIST_NG){
+        cout << "ans_list_ng" << endl;
         int nbr_ngs = m.receive_int_parameter();//number of newsgroups
         for(int i = 0; i < nbr_ngs; i++) { // list newsgroups
             cout << "id: " << m.receive_int_parameter() 
@@ -63,6 +65,7 @@ void list_newsgroups(MessageHandler& m) {
         }
     }
 
+    cout << "reached end of list_newsgroups" << endl;
 }
 
 void create_newsgroup(MessageHandler& m) {

@@ -1,5 +1,9 @@
 #include "messagehandler.h"
 
+#include <iostream>
+
+using namespace std;
+
 MessageHandler::MessageHandler(const Connection& t_conn) : conn(std::move(const_cast<Connection&>(t_conn))) {}
 
 void MessageHandler::send_byte(unsigned char bt) {
@@ -11,7 +15,7 @@ void MessageHandler::send_byte(unsigned char bt) {
 } 
 
 void MessageHandler::send_code(Protocol code) {
-    send_byte(static_cast<unsigned char>(code));
+    send_int(static_cast<int>(code));
 }
 
 void MessageHandler::send_int(int value) {
@@ -36,14 +40,17 @@ void MessageHandler::send_string_parameter(std::string param) {
 
 int MessageHandler::receive_byte() {
     if (!conn.isConnected()) { // fix this
+        std::cout << "is not connected" << std::endl;
         throw ConnectionClosedException();
     }
-
+    std::cout << "about to read byte" << endl;
     int code = conn.read();
+    std::cout << "read byte " << code << endl;
     return code;
 }
 
 Protocol MessageHandler::receive_code() {
+    cout <<  "receiving code" << endl;
     int code = receive_byte();
     return static_cast<Protocol>(code);
 }

@@ -146,15 +146,15 @@ void Server::error(const char* msg) const
         exit(1);
 }
 
-
 std::string Server::respond(int nbr) 
 {
         std::string result;
-        /*
+        
         switch(nbr) {
         case 1:
                 result = db->listGroups();
                 break;
+        /*
         case 2:
                 result = db->addGroup(groupName);
                 break;
@@ -173,9 +173,9 @@ std::string Server::respond(int nbr)
         case 7:
                 result = db->getArticle(groupId, articleId);
                 break;
-        
+        */
+        cout << "about to retunr result" << std::endl;
         return result;
         }
-        */
-        return 0;
 }
+

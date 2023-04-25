@@ -62,27 +62,24 @@ Server init(int argc, char* argv[])
 void process_request(std::shared_ptr<Connection>& conn, Server& server)
 {
         int    nbr = readNumber(conn);
-        // string result;
-        // if (nbr > 0) {
-        //         result = "positive";
-        // } else if (nbr == 0) {
-        //         result = "zero";
-        // } else {
-        //         result = "negative";
-        // }
+        cout << "received code from client: " << nbr << endl;
 
         string result = server.respond(nbr);
+
+        cout << "result " << result << endl;
 
         writeString(conn, result);
 }
 
 void serve_one(Server& server)
 {
+        cout << "waiting for activity" << endl;
         auto conn = server.waitForActivity();
-
+        cout << "done waiting" << endl;
         if (conn != nullptr) {
                 try {
-                    process_request(conn, server);
+                        cout << "processing request" << endl;
+                        process_request(conn, server);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);
                         cout << "Client closed connection" << endl;
@@ -93,6 +90,8 @@ void serve_one(Server& server)
                 cout << "New client connects" << endl;
         }
 }
+
+
 
 int main(int argc, char* argv[])
 {
