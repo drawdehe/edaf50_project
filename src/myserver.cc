@@ -61,24 +61,22 @@ Server init(int argc, char* argv[])
 }
 void process_request(std::shared_ptr<Connection>& conn, Server& server)
 {
-        int    nbr = readNumber(conn);
-        cout << "received code from client: " << nbr << endl;
+        //int    nbr = readNumber(conn); // skriv om till att använda messagehandler
 
+        
+        cout << "Received request code " << nbr << endl; 
         string result = server.respond(nbr);
 
-        cout << "result " << result << endl;
+        cout << "Result from request:\n" << result << endl;
 
         writeString(conn, result);
 }
 
 void serve_one(Server& server)
 {
-        cout << "waiting for activity" << endl;
         auto conn = server.waitForActivity();
-        cout << "done waiting" << endl;
         if (conn != nullptr) {
                 try {
-                        cout << "processing request" << endl;
                         process_request(conn, server);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);

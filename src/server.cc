@@ -25,9 +25,10 @@
 // ------------------------------------------------------------------
 
 #include "server.h"
-
+#include "protocol.h"
 #include "connection.h"
 
+#include <string>
 #include <algorithm>
 #include <arpa/inet.h> /* htons(), ntohs() */
 #include <iostream>
@@ -149,11 +150,10 @@ void Server::error(const char* msg) const
 std::string Server::respond(int nbr) 
 {
         std::string result;
-        
+        // FIXA SYNTAX NEDAN
         switch(nbr) {
         case 1:
                 result = db->listGroups();
-                break;
         /*
         case 2:
                 result = db->addGroup(groupName);
@@ -174,7 +174,6 @@ std::string Server::respond(int nbr)
                 result = db->getArticle(groupId, articleId);
                 break;
         */
-        cout << "about to retunr result" << std::endl;
         return result;
         }
 }

@@ -54,6 +54,7 @@ void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
     cout << "selected list newsgroups" << endl;
+    // fixa frn och med här
     Protocol p = m.receive_code();
     cout << "code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){

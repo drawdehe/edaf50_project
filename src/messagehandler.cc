@@ -39,20 +39,17 @@ void MessageHandler::send_string_parameter(std::string param) {
 }
 
 int MessageHandler::receive_byte() {
-    if (!conn.isConnected()) { // fix this
-        std::cout << "is not connected" << std::endl;
+    if (!conn.isConnected()) {
         throw ConnectionClosedException();
     }
-    std::cout << "about to read byte" << endl;
     int code = conn.read();
     std::cout << "read byte " << code << endl;
     return code;
 }
 
 Protocol MessageHandler::receive_code() {
-    cout <<  "receiving code" << endl;
-    int code = receive_byte();
-    return static_cast<Protocol>(code);
+    cout <<  "receiving code " <<endl;
+    return static_cast<Protocol>(receive_int());
 }
 
 int MessageHandler::receive_int() {

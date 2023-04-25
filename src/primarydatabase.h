@@ -27,7 +27,6 @@ public:
 		for (const auto& kv : m) {
 			os << kv.first << " " << kv.second.getName() << "\n";
 		}
-		std::cout << "primarydatabase:30      " << os.str() << std::endl;
 		return os.str();
 	}
 
