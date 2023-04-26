@@ -215,7 +215,10 @@ void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageH
 
         cout << "Result from request:\n" << result << endl;
 
+        // hårdkodad - gör switch case
+        m.send_code(Protocol::ANS_LIST_NG);
         m.send_string_parameter(result);
+        m.send_code(Protocol::COM_END);
         cout << "processed request" << endl;
 }
 

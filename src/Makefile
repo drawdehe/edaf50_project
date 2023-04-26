@@ -22,7 +22,7 @@ LDFLAGS =   -g
 
 # Targets
 
-PROGS =  client server #articletest grouptest primarytest  messagehandler
+PROGS =  client server #articletest grouptest primarytest
 
 all: $(PROGS)
 
@@ -35,7 +35,6 @@ test:
 #primarytest: primarytest.o
 client: client.o messagehandler.o connection.o
 server: server.o article.o connection.o messagehandler.o
-#messagehandler: messagehandler.o connection.o
 
 
 # Phony targets
