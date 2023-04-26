@@ -36,6 +36,7 @@ void MessageHandler::send_string_parameter(std::string param) {
     for (unsigned int i = 0; i < param.length(); i++) {
         send_byte(param.at(i));
     }
+    std::cout << "sent string parameter" << std::endl;
 }
 
 int MessageHandler::receive_byte() {

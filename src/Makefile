@@ -34,7 +34,7 @@ test:
 #grouptest: grouptest.o
 #primarytest: primarytest.o
 client: client.o messagehandler.o connection.o
-server: myserver.o server.o article.o connection.o messagehandler.o
+server: server.o article.o connection.o messagehandler.o
 #messagehandler: messagehandler.o connection.o
 
 

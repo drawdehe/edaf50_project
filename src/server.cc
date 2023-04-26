@@ -40,6 +40,8 @@
 #include <sys/types.h>  /* socket(), bind(), select() */
 #include <unistd.h>     /* close(), select() */
 
+using namespace std;
+
 Server::Server(int port)
 {
         my_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -178,5 +180,72 @@ std::string Server::respond(int nbr)
         */
         return result;
         }
+}
+
+Server init(int argc, char* argv[])
+{
+        if (argc != 2) {
+                cerr << "Usage: myserver port-number" << endl;
+                exit(1);
+        }
+
+        int port = -1;
+        try {
+                port = std::stoi(argv[1]);
+        } catch (std::exception& e) {
+                cerr << "Wrong format for port number. " << e.what() << endl;
+                exit(2);
+        }
+
+        Server server(port);
+        if (!server.isReady()) {
+                cerr << "Server initialization error." << endl;
+                exit(3);
+        }
+        return server;
+}
+void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
+{
+        //int    nbr = readNumber(conn); // skriv om till att använda messagehandler
+
+        int nbr = m.receive_int();
+        
+        cout << "Received request code " << nbr << endl; 
+        string result = server.respond(nbr);
+
+        cout << "Result from request:\n" << result << endl;
+
+        m.send_string_parameter(result);
+        cout << "processed request" << endl;
+}
+
+void serve_one(Server& server)
+{
+        auto conn = server.waitForActivity();
+        if (conn != nullptr) {
+                try {
+                        MessageHandler m(*conn);   
+                        process_request(conn, server, m);
+                } catch (ConnectionClosedException&) {
+                        server.deregisterConnection(conn);
+                        cout << "Client closed connection" << endl;
+                }
+        } else {
+                conn = std::make_shared<Connection>();
+                server.registerConnection(conn);
+                cout << "New client connects" << endl;
+        }
+}
+
+
+
+int main(int argc, char* argv[])
+{
+        auto server = init(argc, argv);
+
+        while (true) {
+            serve_one(server);
+        }
+        return 0;
 }
 
