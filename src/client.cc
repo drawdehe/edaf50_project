@@ -53,14 +53,15 @@ void receive_answer(MessageHandler& m){
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     //m.send_code(Protocol::COM_END);
-    cout << "selected list newsgroups" << endl;
+    // cout << "selected list newsgroups" << endl;
     // fixa frn och med här
     Protocol p = m.receive_code();
     cout << "code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){
         cout << m.receive_string_parameter();
     }
-    
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
     cout << "reached end of list_newsgroups" << endl;
 }
 

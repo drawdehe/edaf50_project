@@ -1,10 +1,12 @@
 #include "messagehandler.h"
 
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
-MessageHandler::MessageHandler(const Connection& t_conn) : conn(std::move(const_cast<Connection&>(t_conn))) {}
+// MessageHandler::MessageHandler(const Connection& t_conn) : conn(std::move(const_cast<Connection&>(t_conn))) {}
+MessageHandler::MessageHandler(const Connection& t_conn) : conn(t_conn) {}
 
 void MessageHandler::send_byte(unsigned char bt) {
     try {
@@ -83,7 +85,7 @@ std::string MessageHandler::receive_string_parameter() {
     }
 
     std::string result;
-    for (unsigned int i = 0; i <= n; i++) {
+    for (unsigned int i = 0; i < n; i++) { // <=
         unsigned char ch = conn.read();
         result.push_back(ch);
     }
