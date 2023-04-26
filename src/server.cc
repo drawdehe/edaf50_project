@@ -206,12 +206,10 @@ Server init(int argc, char* argv[])
 }
 void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
 {
-        //int    nbr = readNumber(conn); // skriv om till att använda messagehandler
-
-        int nbr = m.receive_int();
+        int code = m.receive_int();
         
-        cout << "Received request code " << nbr << endl; 
-        string result = server.respond(nbr);
+        cout << "Received request code " << code << endl; 
+        string result = server.respond(code);
 
         cout << "Result from request:\n" << result << endl;
 

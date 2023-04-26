@@ -41,7 +41,7 @@
 #include <sys/uio.h>    /* read(), write() */
 #include <unistd.h>     /* close(), read(), write() */
 
-bool Connection::ignoresPipeSignals = false;
+bool Connection::ignoresPipeSignals = true;
 
 Connection::Connection()
 {
@@ -106,7 +106,7 @@ void Connection::write(unsigned char ch) const
         if (count != 1) {
                 throw ConnectionClosedException();
         }
-        std::cout << "connection wrote " << ch << std::endl;
+        //std::cout << "connection wrote " << ch << std::endl;
 }
 
 unsigned char Connection::read() const
