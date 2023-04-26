@@ -27,6 +27,7 @@
 #include "server.h"
 #include "protocol.h"
 #include "connection.h"
+#include "messagehandler.h"
 
 #include <string>
 #include <algorithm>
@@ -132,6 +133,7 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn)
         conn->initConnection(pending_socket);
         connections.push_back(conn);
         pending_socket = Connection::no_socket;
+        //MessageHandler m(*conn);
 }
 
 void Server::deregisterConnection(const std::shared_ptr<Connection>& conn)

@@ -2,6 +2,7 @@
 #include "connection.h"
 #include "connectionclosedexception.h"
 #include "server.h"
+#include "messagehandler.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -59,17 +60,18 @@ Server init(int argc, char* argv[])
         }
         return server;
 }
-void process_request(std::shared_ptr<Connection>& conn, Server& server)
+void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
 {
         //int    nbr = readNumber(conn); // skriv om till att använda messagehandler
 
+        int nbr = m.receive_int();
         
         cout << "Received request code " << nbr << endl; 
         string result = server.respond(nbr);
 
         cout << "Result from request:\n" << result << endl;
 
-        writeString(conn, result);
+        m.send_string_parameter(result);
 }
 
 void serve_one(Server& server)
@@ -77,7 +79,8 @@ void serve_one(Server& server)
         auto conn = server.waitForActivity();
         if (conn != nullptr) {
                 try {
-                        process_request(conn, server);
+                        MessageHandler m(*conn);   
+                        process_request(conn, server, m);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);
                         cout << "Client closed connection" << endl;

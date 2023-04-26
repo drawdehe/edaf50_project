@@ -103,7 +103,7 @@ void Connection::write(unsigned char ch) const
                 error("Write attempted on a not properly opened connection");
         }
         int count = ::write(my_socket, &ch, 1);
-        //std::cout << "connection wrote " << ch << std::endl;
+        std::cout << "connection wrote " << ch << std::endl;
         if (count != 1) {
                 throw ConnectionClosedException();
         }
