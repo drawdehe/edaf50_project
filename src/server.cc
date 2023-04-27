@@ -25,7 +25,6 @@
 // ------------------------------------------------------------------
 
 #include "server.h"
-#include "protocol.h"
 #include "connection.h"
 #include "messagehandler.h"
 
@@ -151,13 +150,13 @@ void Server::error(const char* msg) const
         exit(1);
 }
 
-std::string Server::respond(int nbr) 
+std::string Server::respond(Protocol code) 
 {
         std::string result;
-        // FIXA SYNTAX NEDAN
-        switch(nbr) {
-        case 1:
+        switch(code) {
+        case Protocol::COM_LIST_NG:
                 result = db->listGroups();
+                break;
         /*
         case 2:
                 result = db->addGroup(groupName);
@@ -178,8 +177,9 @@ std::string Server::respond(int nbr)
                 result = db->getArticle(groupId, articleId);
                 break;
         */
-        return result;
         }
+
+        return result;
 }
 
 Server init(int argc, char* argv[])
@@ -206,18 +206,24 @@ Server init(int argc, char* argv[])
 }
 void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
 {
-        int code = m.receive_int();
-        
-        cout << "Received request code " << code << endl; 
-        string result = server.respond(code);
+        Protocol code = m.receive_code();
+        cout << "Received request code " << static_cast<int>(code) << endl;
 
-        cout << "Result from request:\n" << result << endl;
+        string result = "no result yet";
+        switch(code) {
+                case Protocol::COM_LIST_NG:
+                        result = server.respond(code); 
+                        m.send_code(Protocol::ANS_LIST_NG);
+                        // formattering av resultatsträngen bör göras
+                        m.send_string_parameter(result);
+                        m.send_code(Protocol::COM_END);
+                        break;
+                default:
+                        cout << "this should not be printed in the full version" << endl;
+                        break;
+        }
 
-        // hårdkodad - gör switch case
-        m.send_code(Protocol::ANS_LIST_NG);
-        m.send_string_parameter(result);
-        m.send_code(Protocol::COM_END);
-        cout << "processed request" << endl;
+        cout << "Result from request:\n" << result;
 }
 
 void serve_one(Server& server)

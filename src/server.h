@@ -30,6 +30,7 @@
 
 #include "connection.h"
 #include "primarydatabase.h"
+#include "protocol.h"
 
 #include <memory>
 #include <vector>
@@ -67,7 +68,7 @@ class Server {
                             connections(std::move(o.connections)),
                             pending_socket{o.pending_socket} {}
 
-        std::string respond(int nbr);
+        std::string respond(Protocol code);
 
       protected:
         /* The number of the communication socket */
