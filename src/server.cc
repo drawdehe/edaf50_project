@@ -179,16 +179,24 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
         string result = "no result yet";
         switch(code) {
-                case Protocol::COM_LIST_NG:
+                case Protocol::COM_LIST_NG: {
                         result = db->listGroups();
                         m.send_code(Protocol::ANS_LIST_NG);
                         // formattering av resultatsträngen bör göras ( num_p [num_p string_p]*)
                         m.send_string_parameter(result);
                         m.send_code(Protocol::COM_END);
-                        break;
-                default:
+                } break;
+                case Protocol::COM_CREATE_NG: {
+
+                        bool added = db->addGroup(m.receive_string_parameter());
+
+                        m.send_code(Protocol::ANS_CREATE_NG);
+                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
+                        m.send_code(Protocol::COM_END);
+                } break;
+                default: {
                         cout << "this should not be printed in the full version" << endl;
-                        break;
+                } break;
         }
 
         cout << "Result from request:\n" << result;
