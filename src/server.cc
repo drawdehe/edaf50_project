@@ -150,38 +150,6 @@ void Server::error(const char* msg) const
         exit(1);
 }
 
-std::string Server::respond(Protocol code) 
-{
-        std::string result;
-        switch(code) {
-        case Protocol::COM_LIST_NG:
-                result = db->listGroups();
-                break;
-        /*
-        case 2:
-                result = db->addGroup(groupName);
-                break;
-        case 3:
-                result = db->deleteGroup(groupId);
-                break;
-        case 4:
-                result = db->listArticles(groupId);
-                break;
-        case 5:
-                result = db->addArticle(groupId, title, author, text);
-                break;
-        case 6:
-                result = db->deleteArticle(groupId, articleId);
-                break;
-        case 7:
-                result = db->getArticle(groupId, articleId);
-                break;
-        */
-        }
-
-        return result;
-}
-
 Server init(int argc, char* argv[])
 {
         if (argc != 2) {
@@ -204,7 +172,7 @@ Server init(int argc, char* argv[])
         }
         return server;
 }
-void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
+void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
 {
         Protocol code = m.receive_code();
         cout << "Received request code " << static_cast<int>(code) << endl;
@@ -212,9 +180,9 @@ void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageH
         string result = "no result yet";
         switch(code) {
                 case Protocol::COM_LIST_NG:
-                        result = server.respond(code); 
+                        result = db->listGroups();
                         m.send_code(Protocol::ANS_LIST_NG);
-                        // formattering av resultatsträngen bör göras
+                        // formattering av resultatsträngen bör göras ( num_p [num_p string_p]*)
                         m.send_string_parameter(result);
                         m.send_code(Protocol::COM_END);
                         break;
@@ -232,7 +200,7 @@ void serve_one(Server& server)
         if (conn != nullptr) {
                 try {
                         MessageHandler m(*conn);   
-                        process_request(conn, server, m);
+                        server.process_request(conn, server, m);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);
                         cout << "Client closed connection" << endl;

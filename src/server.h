@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "primarydatabase.h"
 #include "protocol.h"
+#include "messagehandler.h"
 
 #include <memory>
 #include <vector>
@@ -70,6 +71,9 @@ class Server {
 
         std::string respond(Protocol code);
 
+
+        void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m);
+
       protected:
         /* The number of the communication socket */
         int my_socket {Connection::no_socket};
@@ -82,6 +86,7 @@ class Server {
 
         /* Prints error message and exits */
         void error(const char* msg) const;
+
 
     private:
         std::unique_ptr<Database> db{new PrimaryDatabase()};
