@@ -234,6 +234,14 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         m.send_code(Protocol::ANS_END);
                 } break;
+                case Protocol::COM_CREATE_ART: {
+                        bool added = db->addArticle(m.receive_int_parameter(), m.receive_string_parameter(),
+                                m.receive_string_parameter(), m.receive_string_parameter());
+
+                        m.send_code(Protocol::ANS_CREATE_ART);
+                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        m.send_code(Protocol::ANS_END);
+                } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;
                 } break;

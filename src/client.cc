@@ -114,6 +114,64 @@ void delete_newsgroup(MessageHandler& m){
     cout << "ended with code " << c << endl;
 }
 
+void create_article(MessageHandler& m) {
+    int num_p;
+    cout << "Enter the identification number of the newsgroup:" << endl;
+    cin >> num_p;
+
+    string article_name;
+    cout << "Enter the name of the article:" << endl;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
+    std::getline(cin, article_name);
+
+    string author_name;
+    cout << "Enter the author of the article:" << endl;
+    //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
+    std::getline(cin, author_name);
+
+    string text;
+    cout << "Enter the text of the article:" << endl;
+    //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
+    std::getline(cin, text);
+
+    m.send_code(Protocol::COM_CREATE_ART);
+    m.send_int_parameter(num_p);
+    m.send_string_parameter(article_name);
+    m.send_string_parameter(author_name);
+    m.send_string_parameter(text);
+    m.send_code(Protocol::COM_END);
+
+    Protocol p = m.receive_code();
+    if (p == Protocol::ANS_CREATE_ART) {
+        Protocol p2 = m.receive_code();
+        if (p2 == Protocol::ANS_ACK) {
+            cout << "Article " << num_p << " was created." << endl;
+        } else if (p2 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+            cout << "Article " << num_p << " could not be created." << endl;
+        }
+    }
+
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
+}
+
+void delete_article(MessageHandler& m) {
+    int group_id;
+    cout << "Enter the identification number of the newsgroup:" << endl;
+    cin >> group_id;
+
+    int article_id;
+    cout << "Enter the identification number of the article:" << endl;
+    cin >> article_id;
+
+    m.send_code(Protocol::COM_DELETE_ART);
+    m.send_int_parameter(group_id);
+    m.send_int_parameter(article_id);
+    m.send_code(Protocol::COM_END);
+
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
+}
 
 int app(const Connection& conn) {
     cout << "Choose a command: " << endl;
@@ -138,10 +196,10 @@ int app(const Connection& conn) {
                     //list_articles_in_a_newsgroup(m);
                     break;
                 case 5:
-                    //create_an_article(m);
+                    create_article(m);
                     break;
                 case 6:
-                    //delete_an_article(m);
+                    delete_article(m);
                     break;
                 case 7:
                     //get_an_article();
