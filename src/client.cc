@@ -115,7 +115,23 @@ void delete_newsgroup(MessageHandler& m){
 }
 
 void list_articles_in_newsgroup(MessageHandler& m) {
-    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter newsgroup:" << endl;
+    int id;
+    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter the identification number of the newsgroup:" << endl;
+    cin >> id;
+
+    m.send_code(Protocol::COM_LIST_ART);
+    m.send_int_parameter(id);
+    m.send_code(Protocol::COM_END);
+
+    if(m.receive_code() == Protocol::ANS_LIST_ART) {
+        int nbr_articles = m.receive_int_parameter();
+        cout << nbr_articles << endl;
+        for(int i = 0; i < nbr_articles; i++) {
+            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+        }
+    }
+
+    Protocol c = m.receive_code();
 }
 
 

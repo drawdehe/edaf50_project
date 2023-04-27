@@ -37,7 +37,7 @@ public:
 
 	string listArticles() const {
 		std::ostringstream os;
-		os <<  m.size() << " articles in " << name << ":" "\n";
+		os <<  m.size() << "\n";
 		for (auto it = m.begin(); it != m.end(); ++it) {
 			os << it->first << " " << it->second.getTitle() << "\n";
 		}

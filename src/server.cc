@@ -219,6 +219,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
                         m.send_code(Protocol::ANS_END);
                 } break;
+
                 case Protocol::COM_CREATE_NG: {
 
                         bool added = db->addGroup(m.receive_string_parameter());
@@ -227,11 +228,58 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
                         m.send_code(Protocol::COM_END);
                 } break;
+
                 case Protocol::COM_DELETE_NG: {
                         bool deleted = db->deleteGroup(m.receive_int_parameter());
 
                         m.send_code(Protocol::ANS_DELETE_NG);
                         deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        m.send_code(Protocol::ANS_END);
+                } break;
+
+                case Protocol::COM_LIST_ART: {
+                        int grp_id = m.receive_int_parameter();
+                        string result = db->listArticles(grp_id);
+
+                        m.send_code(Protocol::ANS_LIST_ART);
+                        if(result == "invalid group id") {
+                                m.send_code(Protocol::ANS_NAK);
+                                m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        } else {
+                                m.send_code(Protocol::ANS_ACK);
+                                
+                                int i = 0;
+                                int nbr_articles = 0;
+                                while(result[i] - '0' >= 0 && result[i] - '0' < 10) {
+                                        nbr_articles = 10*nbr_articles + (result[i] - '0');
+                                        i++;
+                                }
+
+                                i++;
+                                int n = 0;
+                                int article_id = 0;
+                                string title = "";
+                                while(n < nbr_articles) {
+                                        while(result[i] - '0' >= 0 && result[i] - '0' < 10) {
+                                                article_id = 10*article_id + (result[i] - '0');
+                                                i++;
+                                        }
+
+                                        i++;
+                                        while(result[i] != '\n') {
+                                                title.push_back(result[i]);
+                                                i++;
+                                        }
+
+                                        m.send_int_parameter(article_id);
+                                        m.send_string_parameter(title);
+
+                                        article_id = 0;
+                                        title = "";
+                                        n++;
+                                }
+                        }
+
                         m.send_code(Protocol::ANS_END);
                 } break;
                 default: {
