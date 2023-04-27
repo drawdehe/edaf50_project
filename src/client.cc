@@ -102,6 +102,10 @@ void delete_newsgroup(MessageHandler& m){
     receive_answer(m);
 }
 
+void list_articles_in_newsgroup(MessageHandler& m) {
+    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter newsgroup:" << endl;
+}
+
 
 int app(const Connection& conn) {
     cout << "Choose a command: " << endl;
@@ -120,10 +124,10 @@ int app(const Connection& conn) {
                     create_newsgroup(m);
                     break;
                 case 3:
-                    //delete_newsgroup(m);
+                    delete_newsgroup(m);
                     break;
                 case 4:
-                    //list_articles_in_a_newsgroup(m);
+                    list_articles_in_newsgroup(m);
                     break;
                 case 5:
                     //create_an_article(m);
