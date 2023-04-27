@@ -236,15 +236,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         m.send_code(Protocol::ANS_END);
                 } break;
-<<<<<<< HEAD
-                case Protocol::COM_CREATE_ART: {
-                        bool added = db->addArticle(m.receive_int_parameter(), m.receive_string_parameter(),
-                                m.receive_string_parameter(), m.receive_string_parameter());
-
-                        m.send_code(Protocol::ANS_CREATE_ART);
-                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
-=======
-
                 case Protocol::COM_LIST_ART: {
                         int grp_id = m.receive_int_parameter();
                         string result = db->listArticles(grp_id);
@@ -288,7 +279,32 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                 }
                         }
 
->>>>>>> 900630c7fc769954682dcbe42d57a7f9c3de097a
+                        m.send_code(Protocol::ANS_END);
+                } break;
+                case Protocol::COM_CREATE_ART: {
+
+                        // test prints
+                        int group_id = m.receive_int_parameter();
+                        string title = m.receive_string_parameter();
+                        string author = m.receive_string_parameter();
+                        string text = m.receive_string_parameter();
+                        cout << "group_id: " << group_id << endl;
+                        cout << "title: " << title << endl;
+                        cout << "author: " << author << endl;
+                        cout << "text: " << text << endl;
+
+                        bool added = db->addArticle(group_id, title, author, text);
+
+                        m.send_code(Protocol::ANS_CREATE_ART);
+                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        m.send_code(Protocol::ANS_END);
+                } break;
+                case Protocol::COM_DELETE_ART: {
+                        bool deleted = db->deleteArticle(m.receive_int_parameter(), m.receive_int_parameter());
+
+                        m.send_code(Protocol::ANS_DELETE_ART);
+                        deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
+                        // if ANS_NAK, also send code depending on if ng didn't exist or if article didn't exist
                         m.send_code(Protocol::ANS_END);
                 } break;
                 default: {

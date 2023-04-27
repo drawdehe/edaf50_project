@@ -114,15 +114,35 @@ void delete_newsgroup(MessageHandler& m){
     cout << "ended with code " << c << endl;
 }
 
+void list_articles_in_newsgroup(MessageHandler& m) {
+    int id;
+    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter the identification number of the newsgroup:" << endl;
+    cin >> id;
+
+    m.send_code(Protocol::COM_LIST_ART);
+    m.send_int_parameter(id);
+    m.send_code(Protocol::COM_END);
+
+    if(m.receive_code() == Protocol::ANS_LIST_ART) {
+        int nbr_articles = m.receive_int_parameter();
+        cout << nbr_articles << endl;
+        for(int i = 0; i < nbr_articles; i++) {
+            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+        }
+    }
+
+    Protocol c = m.receive_code();
+}
+
 void create_article(MessageHandler& m) {
     int num_p;
     cout << "Enter the identification number of the newsgroup:" << endl;
     cin >> num_p;
 
-    string article_name;
-    cout << "Enter the name of the article:" << endl;
+    string article_title;
+    cout << "Enter the title of the article:" << endl;
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
-    std::getline(cin, article_name);
+    std::getline(cin, article_title);
 
     string author_name;
     cout << "Enter the author of the article:" << endl;
@@ -134,9 +154,14 @@ void create_article(MessageHandler& m) {
     //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, text);
 
+    //cout << "num_p: " << num_p << endl;
+    //cout << "article_name: " << article_name << endl;
+    //cout << "author_name: " << author_name << endl;
+    //cout << "text: " << text << endl;
+
     m.send_code(Protocol::COM_CREATE_ART);
     m.send_int_parameter(num_p);
-    m.send_string_parameter(article_name);
+    m.send_string_parameter(article_title);
     m.send_string_parameter(author_name);
     m.send_string_parameter(text);
     m.send_code(Protocol::COM_END);
@@ -145,9 +170,9 @@ void create_article(MessageHandler& m) {
     if (p == Protocol::ANS_CREATE_ART) {
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
-            cout << "Article " << num_p << " was created." << endl;
+            cout << "Article " << article_title << " was created." << endl;
         } else if (p2 == Protocol::ERR_NG_DOES_NOT_EXIST) {
-            cout << "Article " << num_p << " could not be created." << endl;
+            cout << "Article " << article_title << " could not be created." << endl;
         }
     }
 
@@ -172,26 +197,6 @@ void delete_article(MessageHandler& m) {
     int c = static_cast<int>(m.receive_code());
     cout << "ended with code " << c << endl;
 }
-void list_articles_in_newsgroup(MessageHandler& m) {
-    int id;
-    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter the identification number of the newsgroup:" << endl;
-    cin >> id;
-
-    m.send_code(Protocol::COM_LIST_ART);
-    m.send_int_parameter(id);
-    m.send_code(Protocol::COM_END);
-
-    if(m.receive_code() == Protocol::ANS_LIST_ART) {
-        int nbr_articles = m.receive_int_parameter();
-        cout << nbr_articles << endl;
-        for(int i = 0; i < nbr_articles; i++) {
-            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
-        }
-    }
-
-    Protocol c = m.receive_code();
-}
-
 
 int app(const Connection& conn) {
     cout << "Choose a command: " << endl;
