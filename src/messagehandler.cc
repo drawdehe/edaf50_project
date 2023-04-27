@@ -38,7 +38,7 @@ void MessageHandler::send_string_parameter(std::string param) {
     for (unsigned int i = 0; i < param.length(); i++) {
         send_byte(param.at(i));
     }
-    std::cout << "sent string parameter" << std::endl;
+    //std::cout << "sent string parameter" << std::endl;
 }
 
 int MessageHandler::receive_byte() {
@@ -46,12 +46,12 @@ int MessageHandler::receive_byte() {
         throw ConnectionClosedException();
     }
     int code = conn.read();
-    std::cout << "read byte " << code << endl;
+    //std::cout << "read byte " << code << endl;
     return code;
 }
 
 Protocol MessageHandler::receive_code() {
-    cout <<  "receiving code " <<endl;
+    //cout <<  "receiving code " <<endl;
     return static_cast<Protocol>(receive_int());
 }
 
