@@ -92,14 +92,26 @@ void create_newsgroup(MessageHandler& m) {
 }
 
 void delete_newsgroup(MessageHandler& m){
-    int int_param;
-    cout << "Enter uid of newsgroup to delete:" << endl;
-    cin >> int_param;
+    int num_p;
+    cout << "Enter the identification number of the newsgroup to delete:" << endl;
+    cin >> num_p;
 
     m.send_code(Protocol::COM_DELETE_NG);
-    m.send_int_parameter(int_param);
+    m.send_int_parameter(num_p);
     m.send_code(Protocol::COM_END);
-    receive_answer(m);
+
+    Protocol p = m.receive_code();
+    if (p == Protocol::ANS_DELETE_NG) {
+        Protocol p2 = m.receive_code();
+        if (p2 == Protocol::ANS_ACK) {
+            cout << "Newsgroup " << num_p << " was deleted." << endl;
+        } else if (p2 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+            cout << "Newsgroup " << num_p << " does not exist." << endl;
+        }
+    }
+
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 
@@ -120,7 +132,7 @@ int app(const Connection& conn) {
                     create_newsgroup(m);
                     break;
                 case 3:
-                    //delete_newsgroup(m);
+                    delete_newsgroup(m);
                     break;
                 case 4:
                     //list_articles_in_a_newsgroup(m);

@@ -218,8 +218,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         }
 
                         m.send_code(Protocol::ANS_END);
-                        }
-                        break;
+                } break;
                 case Protocol::COM_CREATE_NG: {
 
                         bool added = db->addGroup(m.receive_string_parameter());
@@ -227,6 +226,13 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         m.send_code(Protocol::ANS_CREATE_NG);
                         added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
                         m.send_code(Protocol::COM_END);
+                } break;
+                case Protocol::COM_DELETE_NG: {
+                        bool deleted = db->deleteGroup(m.receive_int_parameter());
+
+                        m.send_code(Protocol::ANS_DELETE_NG);
+                        deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        m.send_code(Protocol::ANS_END);
                 } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;
