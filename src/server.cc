@@ -41,8 +41,7 @@
 
 using namespace std;
 
-Server::Server(int port)
-{
+Server::Server(int port) {
         my_socket = socket(AF_INET, SOCK_STREAM, 0);
         if (my_socket < 0) {
                 my_socket = Connection::no_socket;
@@ -74,8 +73,7 @@ Server::Server(int port)
         listen(my_socket, 5);
 }
 
-Server::~Server()
-{
+Server::~Server() {
         if (my_socket != Connection::no_socket) {
                 close(my_socket);
         }
@@ -84,8 +82,7 @@ Server::~Server()
 
 bool Server::isReady() const { return my_socket != Connection::no_socket; }
 
-std::shared_ptr<Connection> Server::waitForActivity() const
-{
+std::shared_ptr<Connection> Server::waitForActivity() const {
         if (my_socket == Connection::no_socket) {
                 error("waitForActivity: server not opened");
         }
@@ -123,8 +120,7 @@ std::shared_ptr<Connection> Server::waitForActivity() const
         return return_conn;
 }
 
-void Server::registerConnection(const std::shared_ptr<Connection>& conn)
-{
+void Server::registerConnection(const std::shared_ptr<Connection>& conn) {
         if (conn->getSocket() != Connection::no_socket) {
                 error("registerConnection: connection is busy");
         }
@@ -137,21 +133,18 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn)
         //MessageHandler m(*conn);
 }
 
-void Server::deregisterConnection(const std::shared_ptr<Connection>& conn)
-{
+void Server::deregisterConnection(const std::shared_ptr<Connection>& conn) {
         connections.erase(
             std::remove(connections.begin(), connections.end(), conn),
             connections.end());
 }
 
-void Server::error(const char* msg) const
-{
+void Server::error(const char* msg) const {
         std::cerr << "Class Server::" << msg << std::endl;
         exit(1);
 }
 
-Server init(int argc, char* argv[])
-{
+Server init(int argc, char* argv[]) {
         if (argc != 2) {
                 cerr << "Usage: myserver port-number" << endl;
                 exit(1);
@@ -172,8 +165,7 @@ Server init(int argc, char* argv[])
         }
         return server;
 }
-void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m)
-{
+void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m) {
         Protocol code = m.receive_code();
         cout << "Received request code " << static_cast<int>(code) << endl;
 
@@ -282,7 +274,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_CREATE_ART: {
-
                         // test prints
                         int group_id = m.receive_int_parameter();
                         string title = m.receive_string_parameter();
@@ -300,7 +291,14 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_DELETE_ART: {
-                        bool deleted = db->deleteArticle(m.receive_int_parameter(), m.receive_int_parameter());
+                        // test prints
+                        int group_id = m.receive_int_parameter();
+                        int article_id = m.receive_int_parameter();
+                        cout << "group_id: " << group_id << endl;
+                        cout << "article_id: " << article_id << endl;
+
+                        bool deleted = db->deleteArticle(group_id, article_id);
+                        cout << "deleted: " << deleted << endl;
 
                         m.send_code(Protocol::ANS_DELETE_ART);
                         deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);

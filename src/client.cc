@@ -45,13 +45,6 @@ void list_commands() {
     cout << "8. End the session." << endl;
 }
 
-
-void receive_answer(MessageHandler& m){
-    while (m.receive_code() != Protocol::ANS_END) {
-        // handle the response from the server
-    }
-}
-
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     //m.send_code(Protocol::COM_END);
@@ -70,7 +63,7 @@ void list_newsgroups(MessageHandler& m) {
 
 void create_newsgroup(MessageHandler& m) {
     string name_param;
-    cout << "Pick a name for your new newsgroup:" << endl;
+    cout << "Enter a name for the newsgroup:" << endl;
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, name_param);
     m.send_code(Protocol::COM_CREATE_NG);
@@ -176,8 +169,8 @@ void create_article(MessageHandler& m) {
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //int c = static_cast<int>(m.receive_code());
+    //cout << "ended with code " << c << endl;
 }
 
 void delete_article(MessageHandler& m) {
@@ -189,13 +182,26 @@ void delete_article(MessageHandler& m) {
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
 
+    cout << "group_id: " << group_id << endl;
+    cout << "article_id: " << article_id << endl;
+
     m.send_code(Protocol::COM_DELETE_ART);
     m.send_int_parameter(group_id);
     m.send_int_parameter(article_id);
     m.send_code(Protocol::COM_END);
 
-    int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    Protocol p = m.receive_code();
+    if (p == Protocol::ANS_DELETE_ART) {
+        Protocol p2 = m.receive_code();
+        if (p2 == Protocol::ANS_ACK) {
+            cout << "Article " << article_id << " was deleted." << endl;
+        } else if (p2 == Protocol::ANS_NAK) {
+            cout << "Article " << article_id << " was not found." << endl;
+        }
+    }
+
+    //int c = static_cast<int>(m.receive_code());
+    //cout << "ended with code " << c << endl;
 }
 
 int app(const Connection& conn) {
@@ -227,7 +233,7 @@ int app(const Connection& conn) {
                     delete_article(m);
                     break;
                 case 7:
-                    //get_an_article();
+                    //get_article();
                     break;
                 case 8:
                     return 1;
