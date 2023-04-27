@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include <string>
+#include<limits>
+#include<ios>
 
 using std::string;
 using std::cin;
@@ -69,11 +71,24 @@ void list_newsgroups(MessageHandler& m) {
 void create_newsgroup(MessageHandler& m) {
     string name_param;
     cout << "Pick a name for your new newsgroup:" << endl;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, name_param);
     m.send_code(Protocol::COM_CREATE_NG);
     m.send_string_parameter(name_param);
     m.send_code(Protocol::COM_END);
-    receive_answer(m);
+
+    Protocol p = m.receive_code();
+    if (p == Protocol::ANS_CREATE_NG) {
+        Protocol p2 = m.receive_code();
+        if (p2 == Protocol::ANS_ACK) {
+            cout << "Newsgroup " << name_param << " was created." << endl;
+        } else if (p2 == Protocol::ERR_NG_ALREADY_EXISTS) {
+            cout << "Newsgroup " << name_param << " already exists." << endl;
+        }
+    }
+
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 void delete_newsgroup(MessageHandler& m){
