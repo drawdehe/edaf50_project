@@ -177,12 +177,12 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
         Protocol code = m.receive_code();
         cout << "Received request code " << static_cast<int>(code) << endl;
 
-        string result = "no result yet";
+        string result = "";
         switch(code) {
                 case Protocol::COM_LIST_NG: {
                         result = db->listGroups();
                         m.send_code(Protocol::ANS_LIST_NG);
-                        
+
                         int i = 0;
                         int nbr_newsgroups = 0;
                         while(result[i] - '0' > 0 && result[i] - '0' < 10 ) {
@@ -208,10 +208,13 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                         i++;
                                 }
 
-                                i++;
                                 m.send_int_parameter(id);
                                 m.send_string_parameter(name);
+                                
                                 n++;
+                                i++;
+                                name = "";
+                                id = 0;
                         }
 
                         m.send_code(Protocol::ANS_END);
