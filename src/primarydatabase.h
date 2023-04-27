@@ -23,7 +23,7 @@ public:
 
 	string listGroups() const {
 		std::ostringstream os;
-		os << m.size() << " newsgroups:" << "\n";
+		os << m.size() << "\n";
 		for (const auto& kv : m) {
 			os << kv.first << " " << kv.second.getName() << "\n";
 		}

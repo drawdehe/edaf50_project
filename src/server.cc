@@ -179,12 +179,42 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
         string result = "no result yet";
         switch(code) {
-                case Protocol::COM_LIST_NG:
+                case Protocol::COM_LIST_NG: {
                         result = db->listGroups();
                         m.send_code(Protocol::ANS_LIST_NG);
-                        // formattering av resultatsträngen bör göras ( num_p [num_p string_p]*)
-                        m.send_string_parameter(result);
-                        m.send_code(Protocol::COM_END);
+                        int i = 0;
+                        int nbr_newsgroups = 0;
+                        while(result[i] - '0' > 0 && result[i] - '0' < 10 ) {
+                                nbr_newsgroups = nbr_newsgroups*10 + (result[i] - '0');
+                                i++;
+                        }
+
+                        m.send_int_parameter(nbr_newsgroups);
+                        cout << "read the number " << nbr_newsgroups << endl;
+                        i++;
+                        int n = 0;
+                        int id = 0;
+                        string name = "";
+                        while(n < nbr_newsgroups) {
+                                while(result[i] - '0' >= 0 && result[i] - '0' < 10 ) {
+                                        id = id*10 + (result[i] - '0');
+                                        i++;
+                                }
+
+                                i++;
+                                while(result[i] != ' ' && result[i] != '\n') {
+                                        name.push_back(result[i]);
+                                        i++;
+                                }
+
+                                i++;
+                                m.send_int_parameter(id);
+                                m.send_string_parameter(name);
+                                n++;
+                        }
+
+                        m.send_code(Protocol::ANS_END);
+                        }
                         break;
                 default:
                         cout << "this should not be printed in the full version" << endl;
@@ -193,6 +223,8 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
         cout << "Result from request:\n" << result;
 }
+
+
 
 void serve_one(Server& server)
 {
