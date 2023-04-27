@@ -172,6 +172,26 @@ void delete_article(MessageHandler& m) {
     int c = static_cast<int>(m.receive_code());
     cout << "ended with code " << c << endl;
 }
+void list_articles_in_newsgroup(MessageHandler& m) {
+    int id;
+    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter the identification number of the newsgroup:" << endl;
+    cin >> id;
+
+    m.send_code(Protocol::COM_LIST_ART);
+    m.send_int_parameter(id);
+    m.send_code(Protocol::COM_END);
+
+    if(m.receive_code() == Protocol::ANS_LIST_ART) {
+        int nbr_articles = m.receive_int_parameter();
+        cout << nbr_articles << endl;
+        for(int i = 0; i < nbr_articles; i++) {
+            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+        }
+    }
+
+    Protocol c = m.receive_code();
+}
+
 
 int app(const Connection& conn) {
     cout << "Choose a command: " << endl;
@@ -193,7 +213,7 @@ int app(const Connection& conn) {
                     delete_newsgroup(m);
                     break;
                 case 4:
-                    //list_articles_in_a_newsgroup(m);
+                    list_articles_in_newsgroup(m);
                     break;
                 case 5:
                     create_article(m);
