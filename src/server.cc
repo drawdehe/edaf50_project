@@ -317,8 +317,14 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         //cout << "deleted: " << deleted << endl;
 
                         m.send_code(Protocol::ANS_DELETE_ART);
-                        deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
-                        // if ANS_NAK, also send code depending on if ng didn't exist or if article didn't exist
+                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
+                        if (deleted) {
+                                m.send_code(Protocol::ANS_ACK);
+                        } else {
+                                m.send_code(Protocol::ANS_NAK);
+                                // if ANS_NAK, also send code depending on if ng didn't exist or if article didn't exist
+                                // m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST) or m.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
+                        }
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_GET_ART: {
@@ -336,9 +342,10 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         // m.send_string_parameter(author);
                         // m.send_string_parameter(text);
 
-                        // if article didn't exists, send code depending on the reason
+                        // if article didn't exist, send code depending on the reason
                         // m.send_code(Protocol::ANS_NAK);
-                        
+                        // m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST) or m.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
+
                         m.send_code(Protocol::ANS_END);
                 } break;
                 default: {
