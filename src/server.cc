@@ -314,11 +314,31 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         //cout << "article_id: " << article_id << endl;
 
                         bool deleted = db->deleteArticle(group_id, article_id);
-                        cout << "deleted: " << deleted << endl;
+                        //cout << "deleted: " << deleted << endl;
 
                         m.send_code(Protocol::ANS_DELETE_ART);
                         deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
                         // if ANS_NAK, also send code depending on if ng didn't exist or if article didn't exist
+                        m.send_code(Protocol::ANS_END);
+                } break;
+                case Protocol::COM_GET_ART: {
+                        int group_id = m.receive_int_parameter();
+                        int article_id = m.receive_int_parameter();
+                        //cout << "group_id: " << group_id << endl;
+                        //cout << "article_id: " << article_id << endl;
+
+                        string article = db->getArticle(group_id, article_id);
+                        m.send_code(Protocol::ANS_GET_ART);
+
+                        // if article exists, send it
+                        // m.send_code(Protocol::ANS_ACK);
+                        // m.send_string_parameter(title);
+                        // m.send_string_parameter(author);
+                        // m.send_string_parameter(text);
+
+                        // if article didn't exists, send code depending on the reason
+                        // m.send_code(Protocol::ANS_NAK);
+                        
                         m.send_code(Protocol::ANS_END);
                 } break;
                 default: {
