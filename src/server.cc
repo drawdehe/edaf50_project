@@ -217,15 +217,27 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         bool added = db->addGroup(m.receive_string_parameter());
 
                         m.send_code(Protocol::ANS_CREATE_NG);
-                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
-                        m.send_code(Protocol::COM_END);
+                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
+                        if (added) {
+                                m.send_code(Protocol::ANS_ACK);
+                        } else {
+                                m.send_code(Protocol::ANS_NAK);
+                                m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
+                        }
+                        m.send_code(Protocol::ANS_END);
                 } break;
 
                 case Protocol::COM_DELETE_NG: {
                         bool deleted = db->deleteGroup(m.receive_int_parameter());
 
                         m.send_code(Protocol::ANS_DELETE_NG);
-                        deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        if (deleted) {
+                                m.send_code(Protocol::ANS_ACK);
+                        } else {
+                                m.send_code(Protocol::ANS_NAK);
+                                m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        }
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_LIST_ART: {
@@ -274,28 +286,32 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_CREATE_ART: {
-                        // test prints
                         int group_id = m.receive_int_parameter();
                         string title = m.receive_string_parameter();
                         string author = m.receive_string_parameter();
                         string text = m.receive_string_parameter();
-                        cout << "group_id: " << group_id << endl;
-                        cout << "title: " << title << endl;
-                        cout << "author: " << author << endl;
-                        cout << "text: " << text << endl;
+                        //cout << "group_id: " << group_id << endl;
+                        //cout << "title: " << title << endl;
+                        //cout << "author: " << author << endl;
+                        //cout << "text: " << text << endl;
 
                         bool added = db->addArticle(group_id, title, author, text);
 
                         m.send_code(Protocol::ANS_CREATE_ART);
-                        added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        if (added) {
+                                m.send_code(Protocol::ANS_ACK);
+                        } else {
+                                m.send_code(Protocol::ANS_NAK);
+                                m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
+                        }
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_DELETE_ART: {
-                        // test prints
                         int group_id = m.receive_int_parameter();
                         int article_id = m.receive_int_parameter();
-                        cout << "group_id: " << group_id << endl;
-                        cout << "article_id: " << article_id << endl;
+                        //cout << "group_id: " << group_id << endl;
+                        //cout << "article_id: " << article_id << endl;
 
                         bool deleted = db->deleteArticle(group_id, article_id);
                         cout << "deleted: " << deleted << endl;

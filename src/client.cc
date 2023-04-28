@@ -75,8 +75,11 @@ void create_newsgroup(MessageHandler& m) {
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
             cout << "Newsgroup " << name_param << " was created." << endl;
-        } else if (p2 == Protocol::ERR_NG_ALREADY_EXISTS) {
-            cout << "Newsgroup " << name_param << " already exists." << endl;
+        } else if (p2 == Protocol::ANS_NAK) {
+            Protocol p3 = m.receive_code();
+            if (p3 == Protocol::ERR_NG_ALREADY_EXISTS) {
+                cout << "Newsgroup " << name_param << " already exists." << endl;
+            }
         }
     }
 
@@ -98,8 +101,11 @@ void delete_newsgroup(MessageHandler& m){
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
             cout << "Newsgroup " << num_p << " was deleted." << endl;
-        } else if (p2 == Protocol::ERR_NG_DOES_NOT_EXIST) {
-            cout << "Newsgroup " << num_p << " does not exist." << endl;
+        } else if (p2 == Protocol::ANS_NAK) {
+            Protocol p3 = m.receive_code();
+            if (p3 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+                cout << "Newsgroup " << num_p << " does not exist." << endl;
+            }
         }
     }
 
@@ -164,13 +170,16 @@ void create_article(MessageHandler& m) {
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
             cout << "Article " << article_title << " was created." << endl;
-        } else if (p2 == Protocol::ERR_NG_DOES_NOT_EXIST) {
-            cout << "Article " << article_title << " could not be created." << endl;
+        } else if (p2 == Protocol::ANS_NAK) {
+            Protocol p3 = m.receive_code();
+            if (p3 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+                cout << "Article " << article_title << " could not be created since the newsgroup does not exist." << endl;
+            }
         }
     }
 
-    //int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 void delete_article(MessageHandler& m) {
@@ -200,8 +209,8 @@ void delete_article(MessageHandler& m) {
         }
     }
 
-    //int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 int app(const Connection& conn) {
