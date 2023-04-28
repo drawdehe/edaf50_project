@@ -237,7 +237,7 @@ void get_article(MessageHandler& m) {
         if (p2 == Protocol::ANS_ACK) {
             // print article
         } else if (p2 == Protocol::ANS_NAK) {
-            // print specific error code
+            // two if statements with specific error code
         }
     }
 
