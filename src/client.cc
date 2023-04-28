@@ -58,7 +58,7 @@ void list_newsgroups(MessageHandler& m) {
         }
     }
     int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    cout << "ended with code " << c << endl;
 }
 
 void create_newsgroup(MessageHandler& m) {
@@ -84,7 +84,7 @@ void create_newsgroup(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    cout << "ended with code " << c << endl;
 }
 
 void delete_newsgroup(MessageHandler& m){
@@ -110,7 +110,7 @@ void delete_newsgroup(MessageHandler& m){
     }
 
     int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    cout << "ended with code " << c << endl;
 }
 
 void list_articles_in_newsgroup(MessageHandler& m) {
@@ -130,7 +130,8 @@ void list_articles_in_newsgroup(MessageHandler& m) {
         }
     }
 
-    Protocol c = m.receive_code();
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 void create_article(MessageHandler& m) {
@@ -179,7 +180,7 @@ void create_article(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    cout << "ended with code " << c << endl;
 }
 
 void delete_article(MessageHandler& m) {
@@ -210,7 +211,38 @@ void delete_article(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    cout << "ended with code " << c << endl;
+}
+
+void get_article(MessageHandler& m) {
+    int group_id;
+    cout << "Enter the identification number of the newsgroup:" << endl;
+    cin >> group_id;
+
+    int article_id;
+    cout << "Enter the identification number of the article:" << endl;
+    cin >> article_id;
+
+    //cout << "group_id: " << group_id << endl;
+    //cout << "article_id: " << article_id << endl;
+
+    m.send_code(Protocol::COM_GET_ART);
+    m.send_int_parameter(group_id);
+    m.send_int_parameter(article_id);
+    m.send_code(Protocol::COM_END);
+
+    Protocol p = m.receive_code();
+    if (p == Protocol::ANS_GET_ART) {
+        Protocol p2 = m.receive_code();
+        if (p2 == Protocol::ANS_ACK) {
+            // print article
+        } else if (p2 == Protocol::ANS_NAK) {
+            // print specific error code
+        }
+    }
+
+    int c = static_cast<int>(m.receive_code());
+    cout << "ended with code " << c << endl;
 }
 
 int app(const Connection& conn) {
@@ -242,7 +274,7 @@ int app(const Connection& conn) {
                     delete_article(m);
                     break;
                 case 7:
-                    //get_article();
+                    get_article(m);
                     break;
                 case 8:
                     return 1;
@@ -256,6 +288,7 @@ int app(const Connection& conn) {
             return 1;
         }
     }
+    return 1;
 }
 
 int main(int argc, char* argv[]) {
