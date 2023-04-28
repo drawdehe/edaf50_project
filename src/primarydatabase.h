@@ -70,9 +70,21 @@ public:
 		return true;
 	}
 
-	bool deleteArticle(int groupId, int articleId) {
-		return m.at(groupId).deleteArticle(articleId);
-	}
+	// return 0 if it was deleted
+	// return 1 if the newsgroup didn't exist
+	// return 2 if the article didn't exist
+	int deleteArticle(int groupId, int articleId) {
+    	auto it = m.find(groupId);
+    	if (it == m.end()) {
+        	return 1;
+    	}
+    	NewsGroup& ng = it->second;
+    	if (!ng.deleteArticle(articleId)) {
+        	return 2;
+   		}
+    	return 0;
+}
+
 
 	string getArticle(int groupId, int articleId) {
 		return m.at(groupId).getArticle(articleId);

@@ -212,7 +212,12 @@ void delete_article(MessageHandler& m) {
         if (p2 == Protocol::ANS_ACK) {
             cout << "Article " << article_id << " was deleted." << endl;
         } else if (p2 == Protocol::ANS_NAK) {
-            // two if statements with specific error code
+            Protocol p3 = m.receive_code();
+            if (p3 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+                cout << "Newsgroup " << group_id << " does not exist." << endl;
+            } else if (p3 == Protocol::ERR_ART_DOES_NOT_EXIST) {
+                cout << "Article " << article_id << " does not exist." << endl;
+            }
         }
     }
 
