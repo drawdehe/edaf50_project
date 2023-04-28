@@ -206,7 +206,7 @@ void delete_article(MessageHandler& m) {
         if (p2 == Protocol::ANS_ACK) {
             cout << "Article " << article_id << " was deleted." << endl;
         } else if (p2 == Protocol::ANS_NAK) {
-            cout << "Article " << article_id << " was not found." << endl;
+            // two if statements with specific error code
         }
     }
 
