@@ -35,21 +35,21 @@ Connection init(int argc, char* argv[]) {
 }
 
 void list_commands() {
-    cout << "1. List newsgroups." << endl;
+    cout << "\n1. List newsgroups." << endl;
     cout << "2. Create a newsgroup." << endl;
     cout << "3. Delete a newsgroup." << endl;
     cout << "4. List articles in a newsgroup." << endl;
     cout << "5. Create an article." << endl;
     cout << "6. Delete an article." << endl;
     cout << "7. Get an article." << endl;
-    cout << "8. End the session." << endl;
+    cout << "8. End the session.\n" << endl;
 }
 
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     //m.send_code(Protocol::COM_END);
     Protocol p = m.receive_code();
-    cout << "Sending request with code " << static_cast<int>(p) << endl;
+    //cout << "Sending request with code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){
         int nbr_newsgroups = m.receive_int_parameter();
         cout << nbr_newsgroups << endl;
@@ -84,7 +84,7 @@ void create_newsgroup(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //cout << "ended with code " << c << endl;
 }
 
 void delete_newsgroup(MessageHandler& m){
@@ -110,7 +110,7 @@ void delete_newsgroup(MessageHandler& m){
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //cout << "ended with code " << c << endl;
 }
 
 void list_articles_in_newsgroup(MessageHandler& m) {
@@ -179,7 +179,7 @@ void create_article(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //cout << "ended with code " << c << endl;
 }
 
 void delete_article(MessageHandler& m) {
@@ -191,8 +191,8 @@ void delete_article(MessageHandler& m) {
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
 
-    cout << "group_id: " << group_id << endl;
-    cout << "article_id: " << article_id << endl;
+    //cout << "group_id: " << group_id << endl;
+    //cout << "article_id: " << article_id << endl;
 
     m.send_code(Protocol::COM_DELETE_ART);
     m.send_int_parameter(group_id);
@@ -210,15 +210,15 @@ void delete_article(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //cout << "ended with code " << c << endl;
 }
 
 int app(const Connection& conn) {
-    cout << "Choose a command: " << endl;
     int nbr;
     MessageHandler m(conn);
 
     list_commands();
+    cout << "Choose a command: ";
 
     while (cin >> nbr) {
         try {
@@ -248,8 +248,8 @@ int app(const Connection& conn) {
                     return 1;
                     break;
             }
-            cout << "Choose a command: " << endl;
             list_commands();
+            cout << "Choose a command: ";
         } catch (ConnectionClosedException&) {
             cout << "Invalid command. Disconnecting." << endl;
             // disconnect
