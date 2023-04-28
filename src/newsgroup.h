@@ -23,12 +23,12 @@ public:
 
 	bool addArticle(string title, string author, string text) {
 		if (std::find_if(m.begin(), m.end(), [title](pair<int, Article> kv) { return kv.second.getTitle() == title; }) == m.end()) {
-			return false;
+			int articleId = nextId++;
+			m.insert(pair<int, Article>(articleId, Article(articleId, title, author, text)));
+			return true;
 		}
 
-		int articleId = nextId++;
-		m.insert(pair<int, Article>(articleId, Article(articleId, title, author, text)));
-		return true;
+		return false;
 	}
 
 	bool deleteArticle(int id) {
