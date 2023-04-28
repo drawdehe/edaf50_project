@@ -121,12 +121,18 @@ void list_articles_in_newsgroup(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_ART);
     m.send_int_parameter(id);
     m.send_code(Protocol::COM_END);
-
-    if(m.receive_code() == Protocol::ANS_LIST_ART) {
-        int nbr_articles = m.receive_int_parameter();
-        cout << nbr_articles << endl;
-        for(int i = 0; i < nbr_articles; i++) {
-            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+    Protocol p1 = m.receive_code();
+    if(p1 == Protocol::ANS_LIST_ART) {
+        Protocol p2 = m.receive_code();
+        if(p2 == Protocol::ANS_ACK) {
+            int nbr_articles = m.receive_int_parameter();
+            cout << nbr_articles << endl;
+            for(int i = 0; i < nbr_articles; i++) {
+                cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+            }
+        } else {
+            Protocol p3 = m.receive_code();
+            cout << "neewsgroup does not exist" << endl;
         }
     }
 

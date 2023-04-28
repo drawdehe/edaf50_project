@@ -258,6 +258,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                         i++;
                                 }
 
+                                m.send_int_parameter(nbr_articles);
                                 i++;
                                 int n = 0;
                                 int article_id = 0;
@@ -280,6 +281,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                         article_id = 0;
                                         title = "";
                                         n++;
+                                        i++;
                                 }
                         }
 
