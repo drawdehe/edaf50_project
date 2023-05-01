@@ -10,9 +10,7 @@ class Article {
 public:
 	Article(int idNbr, string tit = "", string auth = "", string txt = ""): id{idNbr}, title{tit}, author{auth}, text{txt} {}
 
-	string getTitle() const {
-		return title;
-	}
+	string getTitle() const;
 
 	friend ostream& operator<<(ostream& os, Article a);
 
@@ -22,6 +20,5 @@ private:
 	string author;
 	string text;
 };
-
 
 #endif
