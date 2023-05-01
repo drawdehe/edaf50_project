@@ -354,6 +354,9 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
                         m.send_code(Protocol::ANS_END);
                 } break;
+                case Protocol::COM_END:{
+                        cout << "end of message" << endl;
+                } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;
                 } break;
