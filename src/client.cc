@@ -92,7 +92,7 @@ void delete_newsgroup(MessageHandler& m){
     cout << "Enter the identification number of the newsgroup to delete:" << endl;
     cin >> num_p;
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
 
@@ -122,7 +122,7 @@ void list_articles_in_newsgroup(MessageHandler& m) {
     cout << "LIST ARTICLES IN A NEWSGROUP \nEnter the identification number of the newsgroup:" << endl;
     cin >> id;
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
 
@@ -207,7 +207,7 @@ void delete_article(MessageHandler& m) {
     cin >> group_id;
 
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
 
@@ -216,7 +216,7 @@ void delete_article(MessageHandler& m) {
     cin >> article_id;
 
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
 
@@ -252,7 +252,7 @@ void get_article(MessageHandler& m) {
     cout << "Enter the identification number of the newsgroup:" << endl;
     cin >> group_id;
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
 
@@ -260,7 +260,7 @@ void get_article(MessageHandler& m) {
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format (int)" << endl;
         throw ConnectionClosedException();
     }
     //cout << "group_id: " << group_id << endl;
