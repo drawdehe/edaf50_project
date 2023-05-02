@@ -78,6 +78,7 @@ Server::~Server() {
                 close(my_socket);
         }
         my_socket = Connection::no_socket;
+
 }
 
 bool Server::isReady() const { return my_socket != Connection::no_socket; }
@@ -130,7 +131,6 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn) {
         conn->initConnection(pending_socket);
         connections.push_back(conn);
         pending_socket = Connection::no_socket;
-        //MessageHandler m(*conn);
 }
 
 void Server::deregisterConnection(const std::shared_ptr<Connection>& conn) {
@@ -165,9 +165,8 @@ Server init(int argc, char* argv[]) {
         }
         return server;
 }
-void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m) {
+void Server::process_request(MessageHandler& m) {
         Protocol code = m.receive_code();
-        cout << "Received request code " << static_cast<int>(code) << endl;
 
         string result = "";
         switch(code) {
@@ -183,7 +182,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         }
 
                         m.send_int_parameter(nbr_newsgroups);
-                        cout << "read the number " << nbr_newsgroups << endl;
                         i++;
                         int n = 0;
                         int id = 0;
@@ -195,7 +193,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                 }
 
                                 i++;
-                                while(result[i] != ' ' && result[i] != '\n') {
+                                while(result[i] != '\n') {
                                         name.push_back(result[i]);
                                         i++;
                                 }
@@ -354,12 +352,14 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
                         m.send_code(Protocol::ANS_END);
                 } break;
+                case Protocol::COM_END:{
+                        // nothing happens here... yet
+                        //cout << "end of message" << endl;
+                } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;
                 } break;
         }
-
-        cout << "Result from request:\n" << result;
 }
 
 
@@ -370,7 +370,7 @@ void serve_one(Server& server)
         if (conn != nullptr) {
                 try {
                         MessageHandler m(*conn);   
-                        server.process_request(conn, server, m);
+                        server.process_request(m);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);
                         cout << "Client closed connection" << endl;
@@ -391,6 +391,7 @@ int main(int argc, char* argv[])
         while (true) {
             serve_one(server);
         }
+
         return 0;
 }
 
