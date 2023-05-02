@@ -309,7 +309,7 @@ void Server::process_request(MessageHandler& m) {
                         if (deleted == 0) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
-                                // if ANS_NAK, also send code depending on if ng didn't exist or if article didn't exist
+                                
                                 m.send_code(Protocol::ANS_NAK);
                                 if (deleted == 1) {
                                       m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);  
@@ -322,22 +322,31 @@ void Server::process_request(MessageHandler& m) {
                 case Protocol::COM_GET_ART: {
                         int group_id = m.receive_int_parameter();
                         int article_id = m.receive_int_parameter();
-                        //cout << "group_id: " << group_id << endl;
-                        //cout << "article_id: " << article_id << endl;
+                        array<string, 3> res;
 
-                        string article = db->getArticle(group_id, article_id);
                         m.send_code(Protocol::ANS_GET_ART);
+                        try {
+                                res = db->getArticle(group_id, article_id);                                
+                        } 
+                        catch (const NewsgroupDoesNotExistError& e) {
+                                m.send_code(Protocol::ANS_NAK);
+                                cout << e.what() << endl;
+                                m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST); 
+                                m.send_code(Protocol::ANS_END);
+                                break;
+                        } 
+                        catch (const ArticleDoesNotExistError& e) {
+                                m.send_code(Protocol::ANS_NAK);
+                                cout << e.what() << endl;
+                                m.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
+                                m.send_code(Protocol::ANS_END);
+                                break;
+                        }
 
-                        // if article exists, send it
-                        // m.send_code(Protocol::ANS_ACK);
-                        // m.send_string_parameter(title);
-                        // m.send_string_parameter(author);
-                        // m.send_string_parameter(text);
-
-                        // if article didn't exist, send code depending on the reason
-                        // m.send_code(Protocol::ANS_NAK);
-                        // m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST) or m.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
-
+                        m.send_code(Protocol::ANS_ACK);
+                        m.send_string_parameter(res[0]);
+                        m.send_string_parameter(res[1]);
+                        m.send_string_parameter(res[2]);
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_END:{
