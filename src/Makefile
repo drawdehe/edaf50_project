@@ -49,6 +49,10 @@ clean:
 distclean: clean
 	rm src/*.d
 
+install: 
+	mkdir -p ../bin
+	install $(PROGS) ../bin
+
 # Include the *.d files
 SRC = $(wildcard *.cc)
 -include $(SRC:.cc=.d)
