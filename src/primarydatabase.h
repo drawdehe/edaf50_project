@@ -13,13 +13,14 @@ using std::string;
 using std::map;
 using std::pair;
 using std::cout;
+using std::endl;
 
 class PrimaryDatabase : public Database {
 
 public:	
 	PrimaryDatabase() {
-		m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
-		addArticle(0, "title", "author", "text");
+		//m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
+		//addArticle(0, "title", "author", "text");
 	}
 
 	string listGroups() const {
@@ -83,11 +84,28 @@ public:
         	return 2;
    		}
     	return 0;
-}
+	}
 
+	array<string, 3> getArticle(int groupId, int articleId) {
+		if (m.count(groupId) > 0) {
+			try {
+				return m.at(groupId).getArticle(articleId);
+			} catch (const std::runtime_error& e) {
+				throw ArticleDoesNotExistError("Error: no article with that ID exists in this newsgroup.");
+			}
+ 		} else {
+ 			throw NewsgroupDoesNotExistError("Error: the specified newsgroup does not exist.");
+ 		}
 
-	string getArticle(int groupId, int articleId) {
-		return m.at(groupId).getArticle(articleId);
+		// try {
+		// 	return m.at(groupId).getArticle(articleId);
+		// } catch (const std::out_of_range& e) {
+		// 	// throw "group not found";
+		// 	cout << "group not found" << endl;
+		// } catch (const std::runtime_error& e) {
+		// 	// throw "article not found";
+		// 	cout << e.what() << endl;
+		// }
 	}
 
 private:

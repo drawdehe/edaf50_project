@@ -72,7 +72,7 @@ class Server {
         std::string respond(Protocol code);
 
 
-        void process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m);
+        void process_request(MessageHandler& m);
 
       protected:
         /* The number of the communication socket */
