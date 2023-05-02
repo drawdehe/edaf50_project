@@ -78,6 +78,7 @@ Server::~Server() {
                 close(my_socket);
         }
         my_socket = Connection::no_socket;
+
 }
 
 bool Server::isReady() const { return my_socket != Connection::no_socket; }
@@ -130,7 +131,6 @@ void Server::registerConnection(const std::shared_ptr<Connection>& conn) {
         conn->initConnection(pending_socket);
         connections.push_back(conn);
         pending_socket = Connection::no_socket;
-        //MessageHandler m(*conn);
 }
 
 void Server::deregisterConnection(const std::shared_ptr<Connection>& conn) {
@@ -165,9 +165,8 @@ Server init(int argc, char* argv[]) {
         }
         return server;
 }
-void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, MessageHandler& m) {
+void Server::process_request(MessageHandler& m) {
         Protocol code = m.receive_code();
-        cout << "Received request code " << static_cast<int>(code) << endl;
 
         string result = "";
         switch(code) {
@@ -183,7 +182,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         }
 
                         m.send_int_parameter(nbr_newsgroups);
-                        cout << "read the number " << nbr_newsgroups << endl;
                         i++;
                         int n = 0;
                         int id = 0;
@@ -195,7 +193,7 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                                 }
 
                                 i++;
-                                while(result[i] != ' ' && result[i] != '\n') {
+                                while(result[i] != '\n') {
                                         name.push_back(result[i]);
                                         i++;
                                 }
@@ -217,7 +215,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         bool added = db->addGroup(m.receive_string_parameter());
 
                         m.send_code(Protocol::ANS_CREATE_NG);
-                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
                         if (added) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -231,7 +228,6 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         bool deleted = db->deleteGroup(m.receive_int_parameter());
 
                         m.send_code(Protocol::ANS_DELETE_NG);
-                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         if (deleted) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -292,15 +288,9 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                         string title = m.receive_string_parameter();
                         string author = m.receive_string_parameter();
                         string text = m.receive_string_parameter();
-                        //cout << "group_id: " << group_id << endl;
-                        //cout << "title: " << title << endl;
-                        //cout << "author: " << author << endl;
-                        //cout << "text: " << text << endl;
 
                         bool added = db->addArticle(group_id, title, author, text);
-
                         m.send_code(Protocol::ANS_CREATE_ART);
-                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         if (added) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -312,14 +302,10 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
                 case Protocol::COM_DELETE_ART: {
                         int group_id = m.receive_int_parameter();
                         int article_id = m.receive_int_parameter();
-                        //cout << "group_id: " << group_id << endl;
-                        //cout << "article_id: " << article_id << endl;
 
                         int deleted = db->deleteArticle(group_id, article_id);
-                        //cout << "deleted: " << deleted << endl;
 
                         m.send_code(Protocol::ANS_DELETE_ART);
-                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
                         if (deleted == 0) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -354,12 +340,13 @@ void Server::process_request(std::shared_ptr<Connection>& conn, Server& server, 
 
                         m.send_code(Protocol::ANS_END);
                 } break;
+                case Protocol::COM_END:{
+                        // nothing happens here... yet
+                } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;
                 } break;
         }
-
-        cout << "Result from request:\n" << result;
 }
 
 
@@ -370,7 +357,7 @@ void serve_one(Server& server)
         if (conn != nullptr) {
                 try {
                         MessageHandler m(*conn);   
-                        server.process_request(conn, server, m);
+                        server.process_request(m);
                 } catch (ConnectionClosedException&) {
                         server.deregisterConnection(conn);
                         cout << "Client closed connection" << endl;
@@ -391,6 +378,7 @@ int main(int argc, char* argv[])
         while (true) {
             serve_one(server);
         }
+
         return 0;
 }
 
