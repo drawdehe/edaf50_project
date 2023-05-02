@@ -182,7 +182,6 @@ void Server::process_request(MessageHandler& m) {
                         }
 
                         m.send_int_parameter(nbr_newsgroups);
-                        cout << "read the number " << nbr_newsgroups << endl;
                         i++;
                         int n = 0;
                         int id = 0;
@@ -354,7 +353,8 @@ void Server::process_request(MessageHandler& m) {
                         m.send_code(Protocol::ANS_END);
                 } break;
                 case Protocol::COM_END:{
-                        cout << "end of message" << endl;
+                        // nothing happens here... yet
+                        //cout << "end of message" << endl;
                 } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;

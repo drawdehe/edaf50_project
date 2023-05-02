@@ -35,7 +35,8 @@ Connection init(int argc, char* argv[]) {
 }
 
 void list_commands() {
-    cout << "\n1. List newsgroups." << endl;
+    cout << "\nWhat do you want to do?" << endl;
+    cout << "1. List newsgroups." << endl;
     cout << "2. Create a newsgroup." << endl;
     cout << "3. Delete a newsgroup." << endl;
     cout << "4. List articles in a newsgroup." << endl;
@@ -46,24 +47,28 @@ void list_commands() {
 }
 
 void list_newsgroups(MessageHandler& m) {
+    cout << "\n1. LIST NEWSGROUPS" << endl;
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
     Protocol p = m.receive_code();
     //cout << "Sending request with code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){
         int nbr_newsgroups = m.receive_int_parameter();
-        cout << nbr_newsgroups << endl;
+        cout << "There are " << nbr_newsgroups << " newsgroup(s).\n" << endl;
+        cout << "Group id\t| Name" << endl;
+        cout << "--------------------------------------" << endl;
         for(int i = 0; i < nbr_newsgroups; i++) {
-            cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+            cout << m.receive_int_parameter() << "\t\t| " << m.receive_string_parameter() << endl;
         }
     }
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
 }
 
 void create_newsgroup(MessageHandler& m) {
-    string name_param;
+    cout << "\n2. CREATE NEWSGROUP" << endl;
+
     cout << "Enter a name for the newsgroup:" << endl;
+    string name_param;
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, name_param);
     m.send_code(Protocol::COM_CREATE_NG);
@@ -84,15 +89,15 @@ void create_newsgroup(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
 }
 
 void delete_newsgroup(MessageHandler& m){
-    int num_p;
+    cout << "\n3. DELETE NEWSGROUP" << endl;
     cout << "Enter the identification number of the newsgroup to delete:" << endl;
+    int num_p;
     cin >> num_p;
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
 
@@ -114,15 +119,14 @@ void delete_newsgroup(MessageHandler& m){
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
 }
 
 void list_articles_in_newsgroup(MessageHandler& m) {
     int id;
-    cout << "LIST ARTICLES IN A NEWSGROUP \nEnter the identification number of the newsgroup:" << endl;
+    cout << "\n4. LIST ARTICLES IN A NEWSGROUP \nEnter the identification number of the newsgroup:" << endl;
     cin >> id;
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
 
@@ -134,9 +138,12 @@ void list_articles_in_newsgroup(MessageHandler& m) {
         Protocol p2 = m.receive_code();
         if(p2 == Protocol::ANS_ACK) {
             int nbr_articles = m.receive_int_parameter();
-            cout << nbr_articles << endl;
+            cout << "There are " << nbr_articles << " articles in newsgroup " << id << endl;
+            cout << "Article id\t| Title" << endl;
+            cout << "--------------------------------------" << endl;
             for(int i = 0; i < nbr_articles; i++) {
-                cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+                //cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
+                cout << m.receive_int_parameter() << "\t\t| " << m.receive_string_parameter() << endl;
             }
         } else {
             Protocol p3 = m.receive_code();
@@ -145,15 +152,15 @@ void list_articles_in_newsgroup(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
 }
 
 void create_article(MessageHandler& m) {
+    cout << "\n5. CREATE ARTICLE" << endl;
     int num_p;
-    cout << "Enter the identification number of the newsgroup:" << endl;
+    cout << "Enter the identification number of the article's newsgroup:" << endl;
     cin >> num_p;
     if(!cin) {
-        cout << "not an integer input" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
 
@@ -164,7 +171,6 @@ void create_article(MessageHandler& m) {
 
     string author_name;
     cout << "Enter the author of the article:" << endl;
-    //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, author_name);
 
     string text;
@@ -188,26 +194,26 @@ void create_article(MessageHandler& m) {
     if (p == Protocol::ANS_CREATE_ART) {
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
-            cout << "Article " << article_title << " was created." << endl;
+            cout << "Article \"" << article_title << "\" was created." << endl;
         } else if (p2 == Protocol::ANS_NAK) {
             Protocol p3 = m.receive_code();
             if (p3 == Protocol::ERR_NG_DOES_NOT_EXIST) {
-                cout << "Article " << article_title << " could not be created since the newsgroup does not exist." << endl;
+                cout << "Article \"" << article_title << "\" could not be created since the newsgroup does not exist." << endl;
             }
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    m.receive_code();
 }
 
 void delete_article(MessageHandler& m) {
+    cout << "\n6. DELETE ARTICLE" << endl;
     int group_id;
-    cout << "Enter the identification number of the newsgroup:" << endl;
+    cout << "Enter the identification number of the article's newsgroup:" << endl;
     cin >> group_id;
 
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
 
@@ -216,12 +222,9 @@ void delete_article(MessageHandler& m) {
     cin >> article_id;
 
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
-
-    //cout << "group_id: " << group_id << endl;
-    //cout << "article_id: " << article_id << endl;
 
     m.send_code(Protocol::COM_DELETE_ART);
     m.send_int_parameter(group_id);
@@ -249,10 +252,11 @@ void delete_article(MessageHandler& m) {
 
 void get_article(MessageHandler& m) {
     int group_id;
-    cout << "Enter the identification number of the newsgroup:" << endl;
+    cout << "\n7. GET ARTICLE" << endl;
+    cout << "Enter the identification number of the article's newsgroup:" << endl;
     cin >> group_id;
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
 
@@ -260,7 +264,7 @@ void get_article(MessageHandler& m) {
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
     if(!cin) {
-        cout << "Not a valid input format (int)" << endl;
+        cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
     //cout << "group_id: " << group_id << endl;
@@ -282,7 +286,7 @@ void get_article(MessageHandler& m) {
     }
 
     int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    //cout << "ended with code " << c << endl;
 }
 
 int app(const Connection& conn) {
@@ -290,7 +294,6 @@ int app(const Connection& conn) {
     MessageHandler m(conn);
 
     list_commands();
-    cout << "Choose a command: ";
 
     while (cin >> nbr) {
         try {
@@ -321,7 +324,7 @@ int app(const Connection& conn) {
                     break;
             }
             list_commands();
-            cout << "Choose a command: ";
+            //cout << "Choose a command: ";
         } catch (ConnectionClosedException&) {
             cout << "Invalid command. Disconnecting." << endl;
             // disconnect
