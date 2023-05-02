@@ -91,6 +91,10 @@ void delete_newsgroup(MessageHandler& m){
     int num_p;
     cout << "Enter the identification number of the newsgroup to delete:" << endl;
     cin >> num_p;
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
 
     m.send_code(Protocol::COM_DELETE_NG);
     m.send_int_parameter(num_p);
@@ -115,8 +119,12 @@ void delete_newsgroup(MessageHandler& m){
 
 void list_articles_in_newsgroup(MessageHandler& m) {
     int id;
-    cout << "LIST ARTICLES IN A NEWSGROUP \n Enter the identification number of the newsgroup:" << endl;
+    cout << "LIST ARTICLES IN A NEWSGROUP \nEnter the identification number of the newsgroup:" << endl;
     cin >> id;
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
 
     m.send_code(Protocol::COM_LIST_ART);
     m.send_int_parameter(id);
@@ -132,7 +140,7 @@ void list_articles_in_newsgroup(MessageHandler& m) {
             }
         } else {
             Protocol p3 = m.receive_code();
-            cout << "neewsgroup does not exist" << endl;
+            cout << "newsgroup does not exist" << endl;
         }
     }
 
@@ -144,6 +152,10 @@ void create_article(MessageHandler& m) {
     int num_p;
     cout << "Enter the identification number of the newsgroup:" << endl;
     cin >> num_p;
+    if(!cin) {
+        cout << "not an integer input" << endl;
+        throw ConnectionClosedException();
+    }
 
     string article_title;
     cout << "Enter the title of the article:" << endl;
@@ -194,9 +206,19 @@ void delete_article(MessageHandler& m) {
     cout << "Enter the identification number of the newsgroup:" << endl;
     cin >> group_id;
 
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
+
     int article_id;
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
+
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
 
     //cout << "group_id: " << group_id << endl;
     //cout << "article_id: " << article_id << endl;
@@ -229,11 +251,18 @@ void get_article(MessageHandler& m) {
     int group_id;
     cout << "Enter the identification number of the newsgroup:" << endl;
     cin >> group_id;
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
 
     int article_id;
     cout << "Enter the identification number of the article:" << endl;
     cin >> article_id;
-
+    if(!cin) {
+        cout << "Not a valid input format (int)" << endl;
+        throw ConnectionClosedException();
+    }
     //cout << "group_id: " << group_id << endl;
     //cout << "article_id: " << article_id << endl;
 
