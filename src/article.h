@@ -11,6 +11,8 @@ public:
 	Article(int idNbr, string tit = "", string auth = "", string txt = ""): id{idNbr}, title{tit}, author{auth}, text{txt} {}
 
 	string getTitle() const;
+	string getAuthor() const;
+	string getText() const;
 
 	friend ostream& operator<<(ostream& os, Article a);
 
