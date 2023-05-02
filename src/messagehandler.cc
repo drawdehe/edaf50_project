@@ -17,7 +17,7 @@ void MessageHandler::send_byte(unsigned char bt) {
 } 
 
 void MessageHandler::send_code(Protocol code) {
-    send_int(static_cast<int>(code));
+    send_byte(static_cast<unsigned char>(code));
 }
 
 void MessageHandler::send_int(int value) {
@@ -52,7 +52,7 @@ int MessageHandler::receive_byte() {
 
 Protocol MessageHandler::receive_code() {
     //cout <<  "receiving code " <<endl;
-    return static_cast<Protocol>(receive_int());
+    return static_cast<Protocol>(receive_byte());
 }
 
 int MessageHandler::receive_int() {
