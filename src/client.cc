@@ -47,7 +47,7 @@ void list_commands() {
 
 void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
-    //m.send_code(Protocol::COM_END);
+    m.send_code(Protocol::COM_END);
     Protocol p = m.receive_code();
     //cout << "Sending request with code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){
