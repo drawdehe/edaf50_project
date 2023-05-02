@@ -18,8 +18,8 @@ class PrimaryDatabase : public Database {
 
 public:	
 	PrimaryDatabase() {
-		m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
-		addArticle(0, "title", "author", "text");
+		//m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
+		//addArticle(0, "title", "author", "text");
 	}
 
 	string listGroups() const {
