@@ -215,7 +215,6 @@ void Server::process_request(MessageHandler& m) {
                         bool added = db->addGroup(m.receive_string_parameter());
 
                         m.send_code(Protocol::ANS_CREATE_NG);
-                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_ALREADY_EXISTS);
                         if (added) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -229,7 +228,6 @@ void Server::process_request(MessageHandler& m) {
                         bool deleted = db->deleteGroup(m.receive_int_parameter());
 
                         m.send_code(Protocol::ANS_DELETE_NG);
-                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         if (deleted) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -290,15 +288,9 @@ void Server::process_request(MessageHandler& m) {
                         string title = m.receive_string_parameter();
                         string author = m.receive_string_parameter();
                         string text = m.receive_string_parameter();
-                        //cout << "group_id: " << group_id << endl;
-                        //cout << "title: " << title << endl;
-                        //cout << "author: " << author << endl;
-                        //cout << "text: " << text << endl;
 
                         bool added = db->addArticle(group_id, title, author, text);
-
                         m.send_code(Protocol::ANS_CREATE_ART);
-                        //added ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST);
                         if (added) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -310,14 +302,10 @@ void Server::process_request(MessageHandler& m) {
                 case Protocol::COM_DELETE_ART: {
                         int group_id = m.receive_int_parameter();
                         int article_id = m.receive_int_parameter();
-                        //cout << "group_id: " << group_id << endl;
-                        //cout << "article_id: " << article_id << endl;
 
                         int deleted = db->deleteArticle(group_id, article_id);
-                        //cout << "deleted: " << deleted << endl;
 
                         m.send_code(Protocol::ANS_DELETE_ART);
-                        //deleted ? m.send_code(Protocol::ANS_ACK) : m.send_code(Protocol::ANS_NAK);
                         if (deleted == 0) {
                                 m.send_code(Protocol::ANS_ACK);
                         } else {
@@ -354,7 +342,6 @@ void Server::process_request(MessageHandler& m) {
                 } break;
                 case Protocol::COM_END:{
                         // nothing happens here... yet
-                        //cout << "end of message" << endl;
                 } break;
                 default: {
                         cout << "this should not be printed in the full version" << endl;

@@ -51,7 +51,6 @@ void list_newsgroups(MessageHandler& m) {
     m.send_code(Protocol::COM_LIST_NG);
     m.send_code(Protocol::COM_END);
     Protocol p = m.receive_code();
-    //cout << "Sending request with code " << static_cast<int>(p) << endl;
     if(p == Protocol::ANS_LIST_NG){
         int nbr_newsgroups = m.receive_int_parameter();
         cout << "There are " << nbr_newsgroups << " newsgroup(s).\n" << endl;
@@ -61,7 +60,7 @@ void list_newsgroups(MessageHandler& m) {
             cout << m.receive_int_parameter() << "\t\t| " << m.receive_string_parameter() << endl;
         }
     }
-    int c = static_cast<int>(m.receive_code());
+    m.receive_code();
 }
 
 void create_newsgroup(MessageHandler& m) {
@@ -88,7 +87,7 @@ void create_newsgroup(MessageHandler& m) {
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
+    m.receive_code();
 }
 
 void delete_newsgroup(MessageHandler& m){
@@ -118,7 +117,7 @@ void delete_newsgroup(MessageHandler& m){
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
+    m.receive_code();
 }
 
 void list_articles_in_newsgroup(MessageHandler& m) {
@@ -142,16 +141,15 @@ void list_articles_in_newsgroup(MessageHandler& m) {
             cout << "Article id\t| Title" << endl;
             cout << "--------------------------------------" << endl;
             for(int i = 0; i < nbr_articles; i++) {
-                //cout << m.receive_int_parameter() << ' ' << m.receive_string_parameter() << endl;
                 cout << m.receive_int_parameter() << "\t\t| " << m.receive_string_parameter() << endl;
             }
         } else {
             Protocol p3 = m.receive_code();
-            cout << "newsgroup does not exist" << endl;
+            cout << "Newsgroup does not exist" << endl;
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
+    m.receive_code();
 }
 
 void create_article(MessageHandler& m) {
@@ -175,13 +173,7 @@ void create_article(MessageHandler& m) {
 
     string text;
     cout << "Enter the text of the article:" << endl;
-    //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // clear input buffer
     std::getline(cin, text);
-
-    //cout << "num_p: " << num_p << endl;
-    //cout << "article_name: " << article_name << endl;
-    //cout << "author_name: " << author_name << endl;
-    //cout << "text: " << text << endl;
 
     m.send_code(Protocol::COM_CREATE_ART);
     m.send_int_parameter(num_p);
@@ -246,8 +238,7 @@ void delete_article(MessageHandler& m) {
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
-    cout << "ended with code " << c << endl;
+    m.receive_code();
 }
 
 void get_article(MessageHandler& m) {
@@ -267,8 +258,6 @@ void get_article(MessageHandler& m) {
         cout << "Not a valid input format. Needs to be an integer." << endl;
         throw ConnectionClosedException();
     }
-    //cout << "group_id: " << group_id << endl;
-    //cout << "article_id: " << article_id << endl;
 
     m.send_code(Protocol::COM_GET_ART);
     m.send_int_parameter(group_id);
@@ -285,8 +274,7 @@ void get_article(MessageHandler& m) {
         }
     }
 
-    int c = static_cast<int>(m.receive_code());
-    //cout << "ended with code " << c << endl;
+    m.receive_code();
 }
 
 int app(const Connection& conn) {
