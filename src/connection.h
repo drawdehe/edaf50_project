@@ -28,6 +28,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "connectionclosedexception.h"
+
 #include <utility>
 
 class Server;

@@ -25,8 +25,6 @@
 // ------------------------------------------------------------------
 
 #include "server.h"
-#include "connection.h"
-#include "messagehandler.h"
 
 #include <string>
 #include <algorithm>
