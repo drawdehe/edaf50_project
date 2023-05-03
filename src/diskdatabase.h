@@ -190,7 +190,14 @@ public:
 
 		getline(infile, title);
 		getline(infile, author);
-		getline(infile, text);
+		//getline(infile, text);
+		string s;
+		while (getline(infile, s)) {
+			text += s;
+			if (!infile.eof()) {
+				text += '\n';
+			}
+		}
 		array<string, 3> a = {title, author, text};
 		return a;
 	}
