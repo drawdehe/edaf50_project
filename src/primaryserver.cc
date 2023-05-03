@@ -24,7 +24,7 @@
 //             added move ctor to Connection and Server
 // ------------------------------------------------------------------
 
-#include "server.h"
+#include "primaryserver.h"
 
 #include <string>
 #include <algorithm>
