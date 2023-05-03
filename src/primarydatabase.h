@@ -18,10 +18,7 @@ using std::endl;
 class PrimaryDatabase : public Database {
 
 public:	
-	PrimaryDatabase() {
-		//m.insert(pair<int, NewsGroup>(0, NewsGroup(0, "testgrupp")));
-		//addArticle(0, "title", "author", "text");
-	}
+	PrimaryDatabase() {}
 
 	string listGroups() const {
 		std::ostringstream os;
@@ -33,7 +30,6 @@ public:
 	}
 
 	bool addGroup(string groupName) {
-		// Check that group name isn't taken
 		if (std::find_if(m.begin(), m.end(), [groupName](pair<int, NewsGroup> kv) { return kv.second.getName() == groupName; }) != m.end()) {
 			return false;
 		}
@@ -47,7 +43,7 @@ public:
 		return m.erase(groupId);
 	}
 
-	string listArticles(int groupId) {
+	string listArticles(int groupId) const {
 		try {
 			return m.at(groupId).listArticles();
 		} catch (const std::out_of_range& e) {
@@ -55,17 +51,17 @@ public:
 		}
 	}
 
-	bool addArticle(int groupId, string title, string author, string text) { // throw error förmodligen?
+	bool addArticle(int groupId, string title, string author, string text) { 
 		auto it = std::find_if(m.begin(), m.end(), [groupId](pair<int, NewsGroup> kv) { return kv.first == groupId; });
 
 		if (it == m.end()) {
-			return false; // specificera fel grupp-id
+			return false; 
 		}
 
 		try {
 			(*it).second.addArticle(title, author, text);	
 		} catch (const std::out_of_range& e) {
-			return false; // artikel-id
+			return false; 
 		}
 		
 		return true;
@@ -86,7 +82,7 @@ public:
     	return 0;
 	}
 
-	array<string, 3> getArticle(int groupId, int articleId) {
+	array<string, 3> getArticle(int groupId, int articleId) const {
 		if (m.count(groupId) > 0) {
 			try {
 				return m.at(groupId).getArticle(articleId);
@@ -96,16 +92,6 @@ public:
  		} else {
  			throw NewsgroupDoesNotExistException("Error: the specified newsgroup does not exist.");
  		}
-
-		// try {
-		// 	return m.at(groupId).getArticle(articleId);
-		// } catch (const std::out_of_range& e) {
-		// 	// throw "group not found";
-		// 	cout << "group not found" << endl;
-		// } catch (const std::runtime_error& e) {
-		// 	// throw "article not found";
-		// 	cout << e.what() << endl;
-		// }
 	}
 
 private:
