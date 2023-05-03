@@ -59,7 +59,6 @@ public:
 	    std::for_each(m.begin(), m.end(), [&os](pair<int, string> kv) { 
 	    	os << kv.first << " " << kv.second << "\n";
 	    });
-		// os << groupId << " " << groupName << "\n";
 
 		return to_string(count) + "\n" + os.str();
 	}
@@ -106,25 +105,31 @@ public:
 		string groupPath = rootName + "/" + to_string(groupId);
 		DIR *dir = opendir(groupPath.c_str());
 		if (dir == NULL) {
-			return "invalid group ID";
+			return "invalid group id";
 		}
 		struct dirent* entry;
 
 		int count = 0;
-		std::ostringstream os;
+		map<int, string> m;
 		entry = readdir(dir);
 		while (entry != NULL) {
 			if (!periodFile(entry->d_name)) {
 				++count;
 				string fName = entry->d_name;
-				string articleId = fName.substr(0, fName.length() - 4);
+				int articleId = stoi(fName.substr(0, fName.length() - 4));
 				ifstream infile(groupPath + "/" + fName);
 				string title;
 				getline(infile, title);
-				os << articleId << " " << title << "\n";
+				m.insert(pair<int, string>(articleId, title));
 			}
 			entry = readdir(dir);
 		}
+
+		std::ostringstream os;
+	    std::for_each(m.begin(), m.end(), [&os](pair<int, string> kv) { 
+	    	os << kv.first << " " << kv.second << "\n";
+	    });
+
 		return to_string(count) + "\n" + os.str();
 	}
 
