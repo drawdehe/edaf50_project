@@ -169,7 +169,7 @@ public:
 	array<string, 3> getArticle(int groupId, int articleId) {
 		DIR *dir = opendir(groupPath.c_str());
 		if (dir == NULL) {
-			return 1;
+ 			throw NewsgroupDoesNotExistException("Error: the specified newsgroup does not exist.");
 		}
 
 		string title;
@@ -178,7 +178,7 @@ public:
 
 		ifstream infile(rootName + "/" + to_string(groupId) + "/" + to_string(articleId) + ".txt");
 		if (!infile) {
-			throw;
+			throw ArticleDoesNotExistException("Error: no article with that ID exists in this newsgroup.");	
 		}
 
 		getline(infile, title);
@@ -198,7 +198,6 @@ private:
 
 	const int NEXTID_PREAMBLE_LENGTH = 8;
 	const int NAME_PREAMBLE_LENGTH = 6;
-
 
 	string inQuotes(string s) {
 		return "\"" + s + "\"";
