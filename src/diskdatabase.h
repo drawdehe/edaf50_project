@@ -60,16 +60,14 @@ public:
 	bool addGroup(string groupName) {
 	    DIR *dir = opendir(rootName.c_str());
         struct dirent* entry;
-	    // skipFiles(dir, 2);
 	    entry = nextIdFile(dir);
-        // entry = readdir(dir);
         int nextId = extractId(entry->d_name);
+        // cout << "id: " + to_string(nextId) << endl;
 
-	   	entry = readdir(dir);
+	   	entry = firstItemFile(dir);
         while (entry != NULL) {
 	    	DIR *innerDir = opendir((rootName + "/" + entry->d_name).c_str());
 	    	struct dirent* innerEntry;
-	    	// skipFiles(innerDir, 2);
 	    	innerEntry = nameFile(innerDir);
         	if (extractName(innerEntry->d_name) == groupName) {
         		return false;
@@ -229,7 +227,10 @@ private:
 	struct dirent* firstItemFile(DIR* dir) const {
 		struct dirent* entry;
 		entry = readdir(dir);
-		while (!std::isdigit((entry->d_name)[0])) {
+		if (entry == NULL) {
+			return NULL;
+		}
+		while (entry != NULL && !std::isdigit((entry->d_name)[0])) { // Kolla och returnera null
 			entry = readdir(dir);
 		}
 		return entry;
@@ -238,8 +239,12 @@ private:
 	struct dirent* nextIdFile(DIR* dir) const {
 		struct dirent* entry;
 		entry = readdir(dir);
+		if (entry == NULL) {
+			return NULL;
+		}
+
 		string name = entry->d_name;
-		while (name.substr(0, 3) != ".ne") {
+		while (entry != NULL && name.substr(0, 3) != ".ne") {
 			entry = readdir(dir);
 			name = entry->d_name;
 		}
@@ -249,8 +254,12 @@ private:
 	struct dirent* nameFile(DIR* dir) const {
 		struct dirent* entry;
 		entry = readdir(dir);
+		if (entry == NULL) {
+			return NULL;
+		}
+
 		string name = entry->d_name;
-		while (name.substr(0, 3) != ".na") {
+		while (entry != NULL && name.substr(0, 3) != ".na") {
 			entry = readdir(dir);
 			name = entry->d_name;
 		}
