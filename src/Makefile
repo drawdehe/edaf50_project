@@ -32,14 +32,12 @@ test:
 
 
 client: client.o messagehandler.o connection.o
+disktest: disktest.o article.o
 primaryserver: primaryserver.o article.o connection.o messagehandler.o
 diskserver: diskserver.o article.o connection.o messagehandler.o
 # primarytest: primarytest.o article.o
 # articletest: articletest.o
 # grouptest: grouptest.o
-# disktest: disktest.o article.o
-# disktest2: disktest2.o article.o
-
 
 # Phony targets
 .PHONY: all test clean distclean

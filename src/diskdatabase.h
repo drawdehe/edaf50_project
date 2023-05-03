@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 #include <dirent.h>
+#include <cctype>
 #include <fstream>
-
 #include <map>
 #include <iostream>
 #include <sstream>
@@ -37,10 +37,9 @@ public:
 	    DIR *dir = opendir(rootName.c_str());
 	    struct dirent* entry;
 		std::ostringstream os;
-		skipFiles(dir, 3);
+		entry = firstItemFile(dir);
 
 		int count = 0;
-		entry = readdir(dir);
 	    while (entry != NULL) {
     		++count;
 
@@ -48,8 +47,8 @@ public:
 	    	DIR *innerDir = opendir((rootName + "/" + groupId).c_str());
 
 	    	struct dirent* innerEntry;
-	    	skipFiles(innerDir, 2);
-	    	innerEntry = readdir(innerDir);
+	    	// skipFiles(innerDir, 2);
+	    	innerEntry = nameFile(innerDir);
 	    	string groupName = extractName(innerEntry->d_name);
     		os << groupId << " " << groupName << endl;
 
@@ -61,16 +60,17 @@ public:
 	bool addGroup(string groupName) {
 	    DIR *dir = opendir(rootName.c_str());
         struct dirent* entry;
-	    skipFiles(dir, 2);
-        entry = readdir(dir);
+	    // skipFiles(dir, 2);
+	    entry = nextIdFile(dir);
+        // entry = readdir(dir);
         int nextId = extractId(entry->d_name);
 
 	   	entry = readdir(dir);
         while (entry != NULL) {
 	    	DIR *innerDir = opendir((rootName + "/" + entry->d_name).c_str());
 	    	struct dirent* innerEntry;
-	    	skipFiles(innerDir, 2);
-	    	innerEntry = readdir(innerDir);
+	    	// skipFiles(innerDir, 2);
+	    	innerEntry = nameFile(innerDir);
         	if (extractName(innerEntry->d_name) == groupName) {
         		return false;
         	}
@@ -93,7 +93,7 @@ public:
 		string id = to_string(groupId);
 		DIR *dir = opendir(rootName.c_str());
 	   	struct dirent* entry;
-		entry = readdir(dir);
+		entry = firstItemFile(dir);
 
 		while (entry != NULL) {
 			if (entry->d_name == id) {
@@ -105,15 +105,15 @@ public:
 		return false;
 	}
 
-	string listArticles(int groupId) {
+	string listArticles(int groupId) const {
 		string groupPath = rootName + "/" + to_string(groupId);
 		DIR *dir = opendir(groupPath.c_str());
 	    struct dirent* entry;
-	    skipFiles(dir, 4);
+	    // skipFiles(dir, 4);
 
 		int count = 0;
 		std::ostringstream os;
-		entry = readdir(dir);
+	    entry = firstItemFile(dir);
 		while (entry != NULL) {
 			++count;
 			string fName = entry->d_name;
@@ -136,8 +136,8 @@ public:
 		}
 
 		struct dirent* entry;
-		skipFiles(dir, 3);
-		entry = readdir(dir);
+		// skipFiles(dir, 3);
+		entry = nextIdFile(dir);
         int nextId = extractId(entry->d_name);
 
        	ofstream outfile(groupPath + "/" + to_string(nextId) + ".txt");
@@ -170,7 +170,7 @@ public:
 		return 0;
 	}
 
-	array<string, 3> getArticle(int groupId, int articleId) {
+	array<string, 3> getArticle(int groupId, int articleId) const {
 		string groupPath = rootName + "/" + to_string(groupId);
 		DIR *dir = opendir(groupPath.c_str());
 		if (dir == NULL) {
@@ -208,15 +208,6 @@ private:
 		return "\"" + s + "\"";
 	}
 
-	string noTxt(string fileName) {
-		return fileName.substr(0, fileName.length() - 4);
-	}
-
-	bool isTextFile(string fileName) const {
-		int nameLength = fileName.length(); 
-		return (nameLength > 4 && fileName.substr(nameLength - 4, 4) == ".txt");
-	}
-
 	int runCommand(string cmd) {
 		return system(cmd.c_str());
 	}
@@ -233,5 +224,36 @@ private:
 		for (int i = 0; i < nbr; ++i) {
 			readdir(dir);
 		}
+	}
+
+	struct dirent* firstItemFile(DIR* dir) const {
+		struct dirent* entry;
+		entry = readdir(dir);
+		while (!std::isdigit((entry->d_name)[0])) {
+			entry = readdir(dir);
+		}
+		return entry;
+	}
+
+	struct dirent* nextIdFile(DIR* dir) const {
+		struct dirent* entry;
+		entry = readdir(dir);
+		string name = entry->d_name;
+		while (name.substr(0, 3) != ".ne") {
+			entry = readdir(dir);
+			name = entry->d_name;
+		}
+		return entry;
+	}
+
+	struct dirent* nameFile(DIR* dir) const {
+		struct dirent* entry;
+		entry = readdir(dir);
+		string name = entry->d_name;
+		while (name.substr(0, 3) != ".na") {
+			entry = readdir(dir);
+			name = entry->d_name;
+		}
+		return entry;
 	}
 };

@@ -12,11 +12,12 @@ int main() {
 	db->addGroup("Group 1");
 	db->addGroup("Group 2");
 	db->addGroup("Supergroup");
+	db->addGroup("Supergroup");
 	// db->addGroup("Spicy BTS Gossip");
 	// db->addGroup("Bland BTS Gossip");
 	// db->addGroup("Jakobs hemligheter");
 	// db->addGroup("Local News");
-	// cout << db->listGroups();
+	cout << db->listGroups();
 	// db->deleteGroup(1);
 	// cout << db->listGroups();
 
@@ -27,14 +28,17 @@ int main() {
 
 	cout << db->listArticles(1);
 
-	cout << db->deleteArticle(5, 3) << endl;
+	cout << db->deleteArticle(1, 1) << endl;
+
+	db->addArticle(1, "Return of Jakobs bravader", "Jakob", "Här finns det inte så mycket att säga.");
 
 	cout << db->listArticles(1);
+
 
 	// // cout << db->listGroups() << endl;
 	// cout << db->listArticles(1);
 
 	// db->deleteArticle(1, 1);
 
-	// cout << db->getArticle(1, 2);
+	db->getArticle(1, 2);
 }
