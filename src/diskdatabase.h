@@ -41,9 +41,9 @@ public:
 	    DIR *dir = opendir(rootName.c_str());
 	    struct dirent* entry;
 		std::ostringstream os;
-		entry = firstItemFile(dir);
 
 		int count = 0;
+		entry = readdir(dir);
 	    while (entry != NULL) {
 	    	if (!periodFile(entry->d_name)) {
     			++count;
