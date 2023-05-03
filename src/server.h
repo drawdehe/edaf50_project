@@ -30,8 +30,8 @@
 
 #include "connection.h"
 #include "primarydatabase.h"
-#include "protocol.h"
 #include "messagehandler.h"
+#include "connection.h"
 
 #include <memory>
 #include <vector>
