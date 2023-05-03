@@ -1,16 +1,16 @@
 //#include <exception>
 #include <stdexcept>
 
-class NewsgroupDoesNotExistError: public std::runtime_error 
+class NewsgroupDoesNotExistException: public std::runtime_error 
 {
 public: 
-    NewsgroupDoesNotExistError(const std::string& msg): 
+    NewsgroupDoesNotExistException(const std::string& msg): 
         std::runtime_error(msg) 
     {} 
 }; 
 
-class ArticleDoesNotExistError: public std::runtime_error{
+class ArticleDoesNotExistException: public std::runtime_error{
     public:
-        ArticleDoesNotExistError(const std::string& msg): std::runtime_error(msg)
+        ArticleDoesNotExistException(const std::string& msg): std::runtime_error(msg)
         {}
 };

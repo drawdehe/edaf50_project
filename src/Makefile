@@ -44,12 +44,13 @@ server: server.o article.o connection.o messagehandler.o
 
 # Standard clean
 clean:
-	rm -f src/*.o $(PROGS)
+	rm -f *.o $(PROGS)
 
 distclean: clean
-	rm src/*.d
+	rm *.d
 
 install: 
+	make
 	mkdir -p ../bin
 	install $(PROGS) ../bin
 

@@ -328,14 +328,14 @@ void Server::process_request(MessageHandler& m) {
                         try {
                                 res = db->getArticle(group_id, article_id);                                
                         } 
-                        catch (const NewsgroupDoesNotExistError& e) {
+                        catch (const NewsgroupDoesNotExistException& e) {
                                 m.send_code(Protocol::ANS_NAK);
                                 cout << e.what() << endl;
                                 m.send_code(Protocol::ERR_NG_DOES_NOT_EXIST); 
                                 m.send_code(Protocol::ANS_END);
                                 break;
                         } 
-                        catch (const ArticleDoesNotExistError& e) {
+                        catch (const ArticleDoesNotExistException& e) {
                                 m.send_code(Protocol::ANS_NAK);
                                 cout << e.what() << endl;
                                 m.send_code(Protocol::ERR_ART_DOES_NOT_EXIST);
