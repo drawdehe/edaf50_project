@@ -19,13 +19,9 @@
 
 ### Running a client
 
-0. Compile the program and run a server
+0. Run the server
 1. Open up a second terminal
 2. Navigate to the bin/ directory
 3. Run the following commands in the terminal
     > `./client *host* *port*`\
     Where *host* is a host of your choosing (can be localhost for example), and *port* is the same port number as for the server.
-
-## Using the program
-
-The program does not like badly formatted input. Sometimes, when a user enters a letter when an integer is requested, the program will close.
