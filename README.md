@@ -15,7 +15,7 @@
 1. Navigate to the bin/ directory
 2. Run one of the following commands in the terminal, depending on the database implementation you want:
     > `./primaryserver *port*`\
-    > `/diskserver *port*`
+    > `./diskserver *port*`
     Where port is the number of a port of your choosing.
 
 ### Running a client
