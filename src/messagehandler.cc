@@ -85,7 +85,7 @@ std::string MessageHandler::receive_string_parameter() {
     }
 
     std::string result;
-    for (unsigned int i = 0; i < n; i++) { // <=
+    for (int i = 0; i < n; i++) { // <=
         unsigned char ch = conn.read();
         result.push_back(ch);
     }

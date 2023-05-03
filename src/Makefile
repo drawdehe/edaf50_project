@@ -22,7 +22,7 @@ LDFLAGS =   -g
 
 # Targets
 
-PROGS =  client primaryserver diskserver disktest #primarytest articletest grouptest primarytest
+PROGS =  client primaryserver diskserver #disktest primarytest articletest grouptest primarytest
 
 all: $(PROGS)
 
@@ -32,9 +32,9 @@ test:
 
 
 client: client.o messagehandler.o connection.o
-disktest: disktest.o article.o
 primaryserver: primaryserver.o article.o connection.o messagehandler.o
 diskserver: diskserver.o article.o connection.o messagehandler.o
+# disktest: disktest.o article.o
 # primarytest: primarytest.o article.o
 # articletest: articletest.o
 # grouptest: grouptest.o

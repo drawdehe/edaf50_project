@@ -143,7 +143,7 @@ void list_articles_in_newsgroup(MessageHandler& m) {
                 cout << m.receive_int_parameter() << "\t\t| " << m.receive_string_parameter() << endl;
             }
         } else {
-            Protocol p3 = m.receive_code();
+            m.receive_code();
             cout << "Newsgroup does not exist" << endl;
         }
     }
