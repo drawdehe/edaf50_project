@@ -46,10 +46,12 @@ diskserver: diskserver.o article.o connection.o messagehandler.o
 clean:
 	rm -f ../bin/$(PROGS)
 	rm -f *.o $(PROGS)
-	rm -fr ./database
 
 distclean: clean
 	rm *.d
+
+cleardatabase:
+	rm -fr ./database
 
 install: 
 	make
