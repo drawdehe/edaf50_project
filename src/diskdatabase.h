@@ -67,7 +67,11 @@ public:
 
 	   	entry = readdir(dir);
         while (entry != NULL) {
-        	if (entry->d_name == groupName) {
+	    	DIR *innerDir = opendir((rootName + "/" + entry->d_name).c_str());
+	    	struct dirent* innerEntry;
+	    	skipFiles(innerDir, 2);
+	    	innerEntry = readdir(innerDir);
+        	if (extractName(innerEntry->d_name) == groupName) {
         		return false;
         	}
 	   		entry = readdir(dir);
@@ -167,6 +171,7 @@ public:
 	}
 
 	array<string, 3> getArticle(int groupId, int articleId) {
+		string groupPath = rootName + "/" + to_string(groupId);
 		DIR *dir = opendir(groupPath.c_str());
 		if (dir == NULL) {
  			throw NewsgroupDoesNotExistException("Error: the specified newsgroup does not exist.");
@@ -207,10 +212,6 @@ private:
 		return fileName.substr(0, fileName.length() - 4);
 	}
 
-	// string groupPath(int groupId) {
-	// 	return rootName + "/" + to_string(groupId) + "/";
-	// }
-
 	bool isTextFile(string fileName) const {
 		int nameLength = fileName.length(); 
 		return (nameLength > 4 && fileName.substr(nameLength - 4, 4) == ".txt");
@@ -219,19 +220,6 @@ private:
 	int runCommand(string cmd) {
 		return system(cmd.c_str());
 	}
-
-	// string getName(DIR* dir, int id) {
-	// 	string groupNameStart = to_string(id) + " ";
-	//    	struct dirent* entry = readdir(dir);
-
-	//    	string fName = entry->d_name; 
-	//    	while (fName.substr(0, groupNameStart.length()) != groupNameStart) {
-	//    		entry = readdir(dir);
-	//    		fName = entry->d_name;
-	//    	}
-	//    	string groupName = entry->d_name;
-	// 	return groupName;
-	// }
 
 	int extractId(string fName) const {
 	    return std::stoi(fName.substr(NEXTID_PREAMBLE_LENGTH, fName.length() - NEXTID_PREAMBLE_LENGTH));
