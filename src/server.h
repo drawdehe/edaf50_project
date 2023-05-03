@@ -30,8 +30,8 @@
 
 #include "connection.h"
 #include "primarydatabase.h"
+#include "diskdatabase.h"
 #include "messagehandler.h"
-#include "connection.h"
 
 #include <memory>
 #include <vector>
@@ -89,7 +89,8 @@ class Server {
 
 
     private:
-        std::unique_ptr<Database> db{new PrimaryDatabase()};
+        //std::unique_ptr<Database> db{new PrimaryDatabase()};
+        std::unique_ptr<Database> db{new DiskDatabase()};
 };
 
 #endif
