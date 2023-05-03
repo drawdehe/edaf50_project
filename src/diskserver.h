@@ -29,8 +29,7 @@
 #define SERVER_H
 
 #include "connection.h"
-#include "primarydatabase.h"
-#include "protocol.h"
+#include "diskdatabase.h"
 #include "messagehandler.h"
 
 #include <memory>
@@ -89,7 +88,7 @@ class Server {
 
 
     private:
-        std::unique_ptr<Database> db{new PrimaryDatabase()};
+        std::unique_ptr<Database> db{new DiskDatabase()};
 };
 
 #endif

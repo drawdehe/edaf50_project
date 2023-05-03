@@ -22,7 +22,7 @@ LDFLAGS =   -g
 
 # Targets
 
-PROGS =  client server primarytest disktest #articletest grouptest primarytest
+PROGS =  client primaryserver diskserver #primarytest articletest grouptest primarytest
 
 all: $(PROGS)
 
@@ -30,19 +30,21 @@ test:
 
 # Targets rely on implicit rules for compiling and linking
 
-#articletest: articletest.o
-#grouptest: grouptest.o
-primarytest: primarytest.o article.o
-client: client.o messagehandler.o connection.o
-server: server.o article.o connection.o messagehandler.o
-disktest: disktest.o article.o
 
+client: client.o messagehandler.o connection.o
+disktest: disktest.o article.o
+primaryserver: primaryserver.o article.o connection.o messagehandler.o
+diskserver: diskserver.o article.o connection.o messagehandler.o
+# primarytest: primarytest.o article.o
+# articletest: articletest.o
+# grouptest: grouptest.o
 
 # Phony targets
 .PHONY: all test clean distclean
 
 # Standard clean
 clean:
+	rm -f ../bin/$(PROGS)
 	rm -f *.o $(PROGS)
 
 distclean: clean

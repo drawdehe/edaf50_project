@@ -1,7 +1,6 @@
-#include "client.h"
+
 #include "messagehandler.h"
 #include "connection.h"
-#include "connectionclosedexception.h"
 
 #include <iostream>
 #include <string>
