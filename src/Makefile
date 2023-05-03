@@ -22,7 +22,7 @@ LDFLAGS =   -g
 
 # Targets
 
-PROGS =  client primaryserver diskserver #primarytest articletest grouptest primarytest
+PROGS =  client primaryserver diskserver disktest #primarytest articletest grouptest primarytest
 
 all: $(PROGS)
 
@@ -46,6 +46,7 @@ diskserver: diskserver.o article.o connection.o messagehandler.o
 clean:
 	rm -f ../bin/$(PROGS)
 	rm -f *.o $(PROGS)
+	rm -fr ./database
 
 distclean: clean
 	rm *.d
