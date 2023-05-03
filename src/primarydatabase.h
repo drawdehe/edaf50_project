@@ -91,10 +91,10 @@ public:
 			try {
 				return m.at(groupId).getArticle(articleId);
 			} catch (const std::runtime_error& e) {
-				throw;
+				throw ArticleDoesNotExistException("Error: no article with that ID exists in this newsgroup.");
 			}
  		} else {
- 			throw std::runtime_error("group not found");
+ 			throw NewsgroupDoesNotExistException("Error: the specified newsgroup does not exist.");
  		}
 
 		// try {

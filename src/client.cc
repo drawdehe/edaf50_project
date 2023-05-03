@@ -268,9 +268,17 @@ void get_article(MessageHandler& m) {
     if (p == Protocol::ANS_GET_ART) {
         Protocol p2 = m.receive_code();
         if (p2 == Protocol::ANS_ACK) {
-            // print article
+            cout << "\nArticle no. " << article_id << " in newsgroup no. " << group_id << endl;
+            cout << "Title: " <<  m.receive_string_parameter() << endl;
+            cout << "Author: " << m.receive_string_parameter() << endl;
+            cout << "---\n" << m.receive_string_parameter() << endl;
         } else if (p2 == Protocol::ANS_NAK) {
-            // two if statements with specific error code
+            Protocol p3 = m.receive_code();
+            if(p3 == Protocol::ERR_NG_DOES_NOT_EXIST) {
+                cout << "Error: Newsgroup " << group_id << " does not exist." << endl;
+            } else if (p3 == Protocol::ERR_ART_DOES_NOT_EXIST) {
+                cout << "Error: Article " << article_id << " does not exist." << endl;
+            }
         }
     }
 

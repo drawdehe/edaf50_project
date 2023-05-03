@@ -5,6 +5,8 @@
 #include <string>
 #include <array>
 
+#include "customexception.h"
+
 using std::string;
 using std::array;
 
