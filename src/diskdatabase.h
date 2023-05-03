@@ -40,19 +40,27 @@ public:
 	string listGroups() const {
 	    DIR *dir = opendir(rootName.c_str());
 	    struct dirent* entry;
-		std::ostringstream os;
+
+		map<int, string> m;
 
 		int count = 0;
 		entry = readdir(dir);
 	    while (entry != NULL) {
 	    	if (!periodFile(entry->d_name)) {
     			++count;
-	    		string groupId = entry->d_name;
-	    		string groupName = getContents(rootName + "/" + groupId + "/.name.txt");
-    			os << groupId << " " << groupName << endl;
+	    		int groupId = stoi(entry->d_name);
+	    		string groupName = getContents(rootName + "/" + to_string(groupId) + "/.name.txt");
+	    		m.insert(pair<int, string>(groupId, groupName));
 	    	}
 			entry = readdir(dir);
 	    }
+
+		std::ostringstream os;
+	    std::for_each(m.begin(), m.end(), [&os](pair<int, string> kv) { 
+	    	os << kv.first << " " << kv.second << "\n";
+	    });
+		// os << groupId << " " << groupName << "\n";
+
 		return to_string(count) + "\n" + os.str();
 	}
 
@@ -113,7 +121,7 @@ public:
 				ifstream infile(groupPath + "/" + fName);
 				string title;
 				getline(infile, title);
-				os << articleId << " " << title << endl;
+				os << articleId << " " << title << "\n";
 			}
 			entry = readdir(dir);
 		}
