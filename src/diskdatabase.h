@@ -21,6 +21,7 @@ using std::ofstream;
 using std::ifstream;
 using std::ostringstream;
 using std::array;
+using std::stoi;
 
 class DiskDatabase : public Database {
 
@@ -29,7 +30,10 @@ public:
 	    DIR *dir = opendir(rootName.c_str());	
 	    if (dir == NULL) {
 	        runCommand("mkdir " + rootName);
-			runCommand("mkdir " + rootName + "/" + inQuotes(".nextid 1"));
+			// runCommand("touch " + rootName + "/" + inQuotes(".nextid 1"));
+	        ofstream outfile(rootName + "/.nextid.txt");
+       		outfile << 1 << endl;
+			outfile.close();
 	    }
 	}
 
@@ -41,17 +45,12 @@ public:
 
 		int count = 0;
 	    while (entry != NULL) {
-    		++count;
-
-	    	string groupId = entry->d_name;
-	    	DIR *innerDir = opendir((rootName + "/" + groupId).c_str());
-
-	    	struct dirent* innerEntry;
-	    	// skipFiles(innerDir, 2);
-	    	innerEntry = nameFile(innerDir);
-	    	string groupName = extractName(innerEntry->d_name);
-    		os << groupId << " " << groupName << endl;
-
+	    	if (!periodFile(entry->d_name)) {
+    			++count;
+	    		string groupId = entry->d_name;
+	    		string groupName = getContents(rootName + "/" + groupId + "/.name.txt");
+    			os << groupId << " " << groupName << endl;
+	    	}
 			entry = readdir(dir);
 	    }
 		return to_string(count) + "\n" + os.str();
@@ -60,67 +59,62 @@ public:
 	bool addGroup(string groupName) {
 	    DIR *dir = opendir(rootName.c_str());
         struct dirent* entry;
-	    entry = nextIdFile(dir);
-        int nextId = extractId(entry->d_name);
-        // cout << "id: " + to_string(nextId) << endl;
 
 	   	entry = firstItemFile(dir);
         while (entry != NULL) {
-	    	DIR *innerDir = opendir((rootName + "/" + entry->d_name).c_str());
-	    	struct dirent* innerEntry;
-	    	innerEntry = nameFile(innerDir);
-        	if (extractName(innerEntry->d_name) == groupName) {
+        	string name = getContents(rootName + "/" + entry->d_name + "/.name.txt");
+        	if (name == groupName) {
         		return false;
-        	}
+        	}	
 	   		entry = readdir(dir);
         }
 
-        string groupPath = rootName + "/" + to_string(nextId);
-        
+        string nextId = getContents(rootName + "/.nextid.txt");
+
+        string groupPath = rootName + "/" + nextId;
+
         runCommand("mkdir " + groupPath);
-        runCommand("mkdir " + groupPath + "/" + inQuotes(".nextid 1"));
-        runCommand("mkdir " + groupPath + "/" + inQuotes(".name " + groupName));
+        setContents(groupPath + "/.nextid.txt", to_string(1));
+        setContents(groupPath + "/.name.txt", groupName);
 
-        runCommand("rm -r " + rootName + "/" + inQuotes(".nextid " + to_string(nextId)));
-        runCommand("mkdir " + rootName + "/" + inQuotes(".nextid " + to_string(nextId + 1)));
-
+        runCommand("rm " + rootName + "/.nextid.txt");
+        setContents(rootName + "/.nextid.txt", to_string(std::stoi(nextId) + 1));
 		return true;
 	}
 
 	bool deleteGroup(int groupId) {
-		string id = to_string(groupId);
-		DIR *dir = opendir(rootName.c_str());
-	   	struct dirent* entry;
-		entry = firstItemFile(dir);
+		string path = rootName + "/" + to_string(groupId);
 
-		while (entry != NULL) {
-			if (entry->d_name == id) {
-				runCommand("rm -r " + rootName + "/" + id);
-				return true;
-			}
-			entry = readdir(dir);
+		DIR *dir = opendir(path.c_str());
+		if (dir == NULL) {
+			return false;
 		}
-		return false;
+
+		runCommand("rm -r " + path);
+		return true;
 	}
 
 	string listArticles(int groupId) const {
 		string groupPath = rootName + "/" + to_string(groupId);
 		DIR *dir = opendir(groupPath.c_str());
-	    struct dirent* entry;
-	    // skipFiles(dir, 4);
+		if (dir == NULL) {
+			return "invalid group ID";
+		}
+		struct dirent* entry;
 
 		int count = 0;
 		std::ostringstream os;
-	    entry = firstItemFile(dir);
+		entry = readdir(dir);
 		while (entry != NULL) {
-			++count;
-			string fName = entry->d_name;
-			string articleId = fName.substr(0, fName.length() - 4);
-			ifstream infile(groupPath + "/" + fName);
-			string title;
-			getline(infile, title);
-			os << articleId << " " << title << endl;
-
+			if (!periodFile(entry->d_name)) {
+				++count;
+				string fName = entry->d_name;
+				string articleId = fName.substr(0, fName.length() - 4);
+				ifstream infile(groupPath + "/" + fName);
+				string title;
+				getline(infile, title);
+				os << articleId << " " << title << endl;
+			}
 			entry = readdir(dir);
 		}
 		return to_string(count) + "\n" + os.str();
@@ -133,19 +127,16 @@ public:
 			return false;
 		}
 
-		struct dirent* entry;
-		// skipFiles(dir, 3);
-		entry = nextIdFile(dir);
-        int nextId = extractId(entry->d_name);
+    	string nextId = getContents(groupPath + "/.nextid.txt");
 
-       	ofstream outfile(groupPath + "/" + to_string(nextId) + ".txt");
+       	ofstream outfile(groupPath + "/" + nextId + ".txt");
        	outfile << title << endl;
 		outfile << author << endl;
 		outfile << text;
 		outfile.close();
 
-        runCommand("rm -r " + groupPath + "/" + inQuotes(".nextId " + to_string(nextId)));
-        runCommand("mkdir " + groupPath + "/" + inQuotes(".nextId " + to_string(nextId + 1)));
+        runCommand("rm " + groupPath + "/.nextid.txt");
+        setContents(groupPath + "/.nextid.txt", to_string(stoi(nextId) + 1));
 
 		return true;
 	}
@@ -224,6 +215,23 @@ private:
 		}
 	}
 
+	string getContents(string path) const {
+		ifstream infile(path);
+		string s;
+		getline(infile, s);
+		return s;
+	}
+
+	void setContents(string path, string contents) const {
+		ofstream outfile(path);
+		outfile << contents << endl;
+		outfile.close();
+	}
+
+	bool periodFile(string name) const {
+		return name[0] == '.';
+	}
+
 	struct dirent* firstItemFile(DIR* dir) const {
 		struct dirent* entry;
 		entry = readdir(dir);
@@ -264,5 +272,9 @@ private:
 			name = entry->d_name;
 		}
 		return entry;
+	}
+
+	void print(string s) {
+		cout << s << endl;
 	}
 };
